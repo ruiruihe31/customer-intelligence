@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InsightFlow - Customer Insights</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "secondary-container": "#b5edea", "tertiary-container": "#ffb347", background: "#f3fbfa", "surface-tint": "#006a68", "outline-variant": "#bacac8", "primary-fixed": "#50f9f6", "on-secondary-container": "#376d6b", "surface-variant": "#dce4e3", tertiary: "#845400", secondary: "#306765", "on-background": "#161d1d", "on-tertiary-fixed-variant": "#643f00", "primary-fixed-dim": "#1adcd9", "inverse-surface": "#2a3231", "surface-container-lowest": "#ffffff", "on-surface-variant": "#3b4949", error: "#ba1a1a", "on-secondary-fixed": "#00201f", "tertiary-fixed-dim": "#ffb95a", "on-error": "#ffffff", primary: "#006a68", "inverse-primary": "#1adcd9", "surface-container-low": "#eef5f4", "on-primary-fixed": "#00201f", "surface-container-highest": "#dce4e3", surface: "#f3fbfa", "on-secondary": "#ffffff", "primary-container": "#05d8d5", "surface-container-high": "#e2eae9", "on-tertiary-fixed": "#2a1800", "error-container": "#ffdad6", "tertiary-fixed": "#ffddb6", outline: "#6b7a79", "inverse-on-surface": "#ebf2f1", "secondary-fixed": "#b5edea", "on-surface": "#161d1d", "on-tertiary": "#ffffff", "on-primary-container": "#005958", "surface-container": "#e8efee", "on-error-container": "#93000a", "surface-dim": "#d4dcda", "surface-bright": "#f3fbfa", "on-secondary-fixed-variant": "#144f4e", "on-tertiary-container": "#704700", "on-primary-fixed-variant": "#00504e", "secondary-fixed-dim": "#9ad1ce"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Inter"], label: ["Inter"], display: "Manrope"}}}};</script>
+<style>
+      body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; color: #0b1c30; }
+      .font-headline { font-family: 'Manrope', sans-serif; }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary/20">
+<!-- TopNavBar from Shared Components -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] px-8 py-4 flex justify-between items-center w-full max-w-full mx-auto">
+<div class="flex items-center gap-12">
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 font-headline">InsightFlow</span>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-body font-medium" href="#">Overview</a>
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-body font-medium" href="#">Products</a>
+<a class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-body font-medium" href="#">Customers</a>
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-body font-medium" href="#">Retention</a>
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-body font-medium" href="#">Chatbot</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">calendar_today</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">public</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">category</button>
+<div class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a data analyst woman in a modern office setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUy5Ajp0a4WUVeDrNa3Lw7Cl436RjGJaFEVbjK0qMWR4xK-KR8eWwKjpNv1NLH-vV2TBVoWEJ1rnSnHkfvRp8ppUumvVTrVoqZ984ElA516HatOL6OPFEU122vu7kKBOAm2IEzPupL_MpXkwS_cPbr9p577w3z-386Y8ZaJCuT_HwZFNwXzHA43YmDZGz94s8jGQT33IaecGw0goDnWoJJ4M86D7k2iE1366ftMcB4CXTrP3nM-gnauu7DjtiJk4vdKM4nvafdSi8"/>
+</div>
+</div>
+</nav>
+<main class="pt-28 pb-12 px-8 max-w-[1600px] mx-auto space-y-12">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-1">
+<h1 class="text-3xl font-headline font-semibold text-on-surface tracking-tight">Customer Insights</h1>
+<p class="text-on-surface-variant font-body">Deep dive into behavioral patterns and demographic distributions.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface border-none shadow-sm font-medium flex items-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span> Filter
+                </button>
+<button class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary font-semibold shadow-lg shadow-primary/20 flex items-center gap-2 hover:opacity-90 transition-all scale-100 active:scale-95">
+<span class="material-symbols-outlined text-[20px]">file_download</span> Export Report
+                </button>
+</div>
+</header>
+<!-- Top: Customer Personas Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- High Value -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<div class="flex justify-between items-start">
+<div class="p-3 rounded-xl bg-secondary-container/20 text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">diamond</span>
+</div>
+<span class="text-secondary font-bold text-lg font-headline">12%</span>
+</div>
+<div>
+<h3 class="text-lg font-semibold font-headline">High Value</h3>
+<p class="text-xs font-medium text-on-surface-variant font-body mt-1">Top 10% spenders with consistent LTV growth.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="text-2xl font-bold text-on-surface">$4,280<span class="text-sm font-normal text-on-surface-variant ml-1">avg.</span></span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded">Growth</span>
+</div>
+</div>
+<!-- Heavy Browsers -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col gap-4 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex justify-between items-start">
+<div class="p-3 rounded-xl bg-primary-fixed text-on-primary-fixed-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">ads_click</span>
+</div>
+<span class="text-primary font-bold text-lg font-headline">34%</span>
+</div>
+<div>
+<h3 class="text-lg font-semibold font-headline">Heavy Browsers</h3>
+<p class="text-xs font-medium text-on-surface-variant font-body mt-1">High session count but lower conversion rate.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="text-2xl font-bold text-on-surface">18.4<span class="text-sm font-normal text-on-surface-variant ml-1">mins</span></span>
+<span class="text-primary text-xs font-semibold">+12% vs LW</span>
+</div>
+</div>
+<!-- Promotion-Sensitive -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col gap-4 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary"></div>
+<div class="flex justify-between items-start">
+<div class="p-3 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sell</span>
+</div>
+<span class="text-tertiary font-bold text-lg font-headline">28%</span>
+</div>
+<div>
+<h3 class="text-lg font-semibold font-headline">Promotion-Sensitive</h3>
+<p class="text-xs font-medium text-on-surface-variant font-body mt-1">Primarily purchase during seasonal sales.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="text-2xl font-bold text-on-surface">72%<span class="text-sm font-normal text-on-surface-variant ml-1">disc.</span></span>
+<span class="text-tertiary text-xs font-semibold">Coupon reliant</span>
+</div>
+</div>
+<!-- Dormant -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col gap-4 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-outline"></div>
+<div class="flex justify-between items-start">
+<div class="p-3 rounded-xl bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">snooze</span>
+</div>
+<span class="text-outline font-bold text-lg font-headline">26%</span>
+</div>
+<div>
+<h3 class="text-lg font-semibold font-headline">Dormant</h3>
+<p class="text-xs font-medium text-on-surface-variant font-body mt-1">Inactive for &gt; 90 days. High churn risk.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="text-2xl font-bold text-on-surface">94<span class="text-sm font-normal text-on-surface-variant ml-1">days</span></span>
+<span class="text-error text-xs font-semibold">Action Req.</span>
+</div>
+</div>
+</section>
+<!-- Middle: Clustering & RFM Visualization -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Scatter Plot: Customer Clustering -->
+<div class="lg:col-span-8 bg-surface-container-lowest p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-xl font-bold font-headline">Customer Clustering</h3>
+<p class="text-sm text-on-surface-variant">Multivariate PCA analysis of purchase behavior</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-primary"></span><span class="text-xs font-medium">Cluster A</span></div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-secondary"></span><span class="text-xs font-medium">Cluster B</span></div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-tertiary"></span><span class="text-xs font-medium">Cluster C</span></div>
+</div>
+</div>
+<div class="h-80 relative bg-surface-container-low rounded-xl overflow-hidden p-6 border border-outline-variant/10">
+<!-- Faux Scatter Plot -->
+<div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+<div class="w-full h-full bg-[radial-gradient(#c2c6d9_1px,transparent_1px)] [background-size:24px_24px]"></div>
+</div>
+<div class="relative w-full h-full">
+<!-- Sample Dots -->
+<div class="absolute bottom-1/4 left-1/4 w-4 h-4 bg-primary/40 rounded-full blur-[2px]"></div>
+<div class="absolute bottom-[30%] left-[22%] w-3 h-3 bg-primary rounded-full"></div>
+<div class="absolute bottom-[40%] left-[28%] w-5 h-5 bg-primary/30 rounded-full blur-[4px]"></div>
+<div class="absolute bottom-[20%] left-[35%] w-3 h-3 bg-primary rounded-full"></div>
+<div class="absolute top-1/3 right-1/4 w-6 h-6 bg-secondary/40 rounded-full blur-[3px]"></div>
+<div class="absolute top-[35%] right-[22%] w-4 h-4 bg-secondary rounded-full"></div>
+<div class="absolute top-[20%] right-[30%] w-3 h-3 bg-secondary rounded-full"></div>
+<div class="absolute top-1/4 left-1/2 w-4 h-4 bg-tertiary/40 rounded-full blur-[2px]"></div>
+<div class="absolute top-[28%] left-[48%] w-3 h-3 bg-tertiary rounded-full"></div>
+</div>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Principal Component 1</div>
+<div class="absolute left-2 top-1/2 -rotate-90 -translate-y-1/2 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Principal Component 2</div>
+</div>
+</div>
+<!-- RFM Bar Chart -->
+<div class="lg:col-span-4 bg-surface-container-lowest p-8 rounded-2xl flex flex-col">
+<h3 class="text-xl font-bold font-headline mb-2">RFM Segments</h3>
+<p class="text-sm text-on-surface-variant mb-8">Recency, Frequency, Monetary split</p>
+<div class="flex-grow space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span>Champions</span>
+<span>42%</span>
+</div>
+<div class="h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[42%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span>Loyalists</span>
+<span>28%</span>
+</div>
+<div class="h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary to-secondary-fixed-dim w-[28%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span>At Risk</span>
+<span>15%</span>
+</div>
+<div class="h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-tertiary to-tertiary-container w-[15%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span>Lost</span>
+<span>15%</span>
+</div>
+<div class="h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline w-[15%]"></div>
+</div>
+</div>
+</div>
+<button class="mt-8 text-primary font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                    View detailed RFM scoring <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Middle: Funnel Chart -->
+<section class="bg-surface-container-lowest p-8 rounded-2xl">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-10">
+<div>
+<h3 class="text-xl font-bold font-headline">Conversion Funnel</h3>
+<p class="text-sm text-on-surface-variant">Step-by-step behavior from discovery to purchase</p>
+</div>
+<div class="bg-surface-container-low p-1 rounded-lg flex mt-4 md:mt-0">
+<button class="px-4 py-1.5 rounded-md bg-white shadow-sm text-xs font-semibold">Web</button>
+<button class="px-4 py-1.5 text-xs font-semibold text-on-surface-variant">Mobile App</button>
+</div>
+</div>
+<div class="flex flex-col gap-4 max-w-4xl mx-auto">
+<!-- Step 1 -->
+<div class="group relative">
+<div class="bg-primary/10 h-20 rounded-2xl flex items-center px-8 justify-between border-l-4 border-primary">
+<span class="text-lg font-bold font-headline">Page View</span>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold text-on-surface">120.4k</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Base traffic</span>
+</div>
+</div>
+</div>
+<!-- Dropoff -->
+<div class="flex justify-center -my-2 relative z-10">
+<div class="bg-surface-container-lowest px-4 py-1 border border-outline-variant/20 rounded-full text-[10px] font-bold text-primary">64.2% CR</div>
+</div>
+<!-- Step 2 -->
+<div class="group relative px-6">
+<div class="bg-primary/20 h-20 rounded-2xl flex items-center px-8 justify-between border-l-4 border-primary/60">
+<span class="text-lg font-bold font-headline">Add to Cart</span>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold text-on-surface">77.3k</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Intent identified</span>
+</div>
+</div>
+</div>
+<!-- Dropoff -->
+<div class="flex justify-center -my-2 relative z-10">
+<div class="bg-surface-container-lowest px-4 py-1 border border-outline-variant/20 rounded-full text-[10px] font-bold text-primary">31.8% CR</div>
+</div>
+<!-- Step 3 -->
+<div class="group relative px-12">
+<div class="bg-primary/40 h-20 rounded-2xl flex items-center px-8 justify-between border-l-4 border-primary/40">
+<span class="text-lg font-bold font-headline">Checkout</span>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold text-on-surface">24.6k</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Billing initiated</span>
+</div>
+</div>
+</div>
+<!-- Dropoff -->
+<div class="flex justify-center -my-2 relative z-10">
+<div class="bg-surface-container-lowest px-4 py-1 border border-outline-variant/20 rounded-full text-[10px] font-bold text-primary">82.1% CR</div>
+</div>
+<!-- Step 4 -->
+<div class="group relative px-20">
+<div class="bg-primary h-20 rounded-2xl flex items-center px-8 justify-between text-on-primary">
+<span class="text-lg font-bold font-headline">Purchase</span>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold">20.2k</span>
+<span class="text-[10px] text-primary-fixed font-bold uppercase">Successful Trans.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom: Demographics & Map -->
+<section class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+<!-- Demographic Mini Charts -->
+<div class="xl:col-span-4 space-y-6">
+<!-- Age distribution -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl">
+<h4 class="font-headline font-bold text-sm mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">cake</span> Age Distribution
+                    </h4>
+<div class="flex items-end justify-between h-24 gap-2">
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-full bg-surface-container-high rounded-t-md h-[40%] hover:bg-primary/60 transition-colors"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">18-24</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-full bg-primary rounded-t-md h-[85%]"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">25-34</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-full bg-surface-container-high rounded-t-md h-[60%] hover:bg-primary/60 transition-colors"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">35-44</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-full bg-surface-container-high rounded-t-md h-[30%] hover:bg-primary/60 transition-colors"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">45+</span>
+</div>
+</div>
+</div>
+<!-- Gender distribution -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl">
+<h4 class="font-headline font-bold text-sm mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-secondary">wc</span> Gender Split
+                    </h4>
+<div class="flex h-4 rounded-full overflow-hidden bg-surface-container-high">
+<div class="h-full bg-secondary w-[58%]" title="Female 58%"></div>
+<div class="h-full bg-primary-fixed w-[38%]" title="Male 38%"></div>
+<div class="h-full bg-outline-variant w-[4%]" title="Other 4%"></div>
+</div>
+<div class="flex justify-between mt-4">
+<div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-secondary"></div><span class="text-xs">Female (58%)</span></div>
+<div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-primary-fixed"></div><span class="text-xs">Male (38%)</span></div>
+<div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-outline-variant"></div><span class="text-xs">Other (4%)</span></div>
+</div>
+</div>
+<!-- Region Highlight -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl">
+<h4 class="font-headline font-bold text-sm mb-4">Top Regions</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-xs font-medium">North America</span>
+<span class="text-xs font-bold">$1.2M</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs font-medium">Western Europe</span>
+<span class="text-xs font-bold">$840k</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs font-medium">East Asia</span>
+<span class="text-xs font-bold">$610k</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stylized World Map -->
+<div class="xl:col-span-8 bg-slate-900 rounded-2xl overflow-hidden relative min-h-[500px]">
+<img class="w-full h-full object-cover opacity-40" data-alt="minimal dark world map with neon blue glowing connection lines and data points representing global commerce hubs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnA4SoHVDFcqN5HkhdW3dTVy6haOr-phi0CmaSlCLGv5FN9Q4H27tOe2UEUHN9Ah5h4NfW2QuFTlTXu8J9l49i_dJfwDfMzIVSQPaBTINmA9Tpz_-DpjmSRl2nJNeHucjIU6Tyos2f5KPpZuXpoMHk7mJF6r2Lgy3GvlOz9-u3lsWIH2D9QlTbwBh641NPJybF4E4TzBTJPd4QgMIb5rnY2j37XxPtNLqMHOeLg6mYmjhIOUexLOAmFW9rZZ_3coqhY8jWsz9riuU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+<div class="absolute top-8 left-8">
+<h3 class="text-xl font-bold font-headline text-white">Global Revenue Heatmap</h3>
+<p class="text-sm text-slate-400">Regional distribution of active purchasing customers</p>
+</div>
+<!-- Map Legend -->
+<div class="absolute bottom-8 left-8 right-8 flex justify-between items-end">
+<div class="bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-slate-700">
+<div class="text-[10px] uppercase font-bold text-slate-500 mb-2">Real-time Activity</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-xl font-bold text-white">4.2k</span>
+<span class="text-[10px] text-slate-400">Current Sessions</span>
+</div>
+<div class="w-px h-8 bg-slate-700"></div>
+<div class="flex flex-col">
+<span class="text-xl font-bold text-secondary-fixed">82%</span>
+<span class="text-[10px] text-slate-400">Active Checkouts</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="h-2 w-32 bg-gradient-to-r from-slate-700 to-primary rounded-full"></div>
+<div class="flex justify-between w-32 text-[10px] font-bold text-slate-500">
+<span>Low</span>
+<span>High Volume</span>
+</div>
+</div>
+</div>
+<!-- Geographic Markers -->
+<div class="absolute top-1/3 left-1/4 group cursor-pointer">
+<div class="w-4 h-4 bg-primary rounded-full animate-ping absolute"></div>
+<div class="w-4 h-4 bg-primary rounded-full relative border-2 border-white"></div>
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">New York</div>
+</div>
+<div class="absolute top-[40%] left-[45%] group cursor-pointer">
+<div class="w-3 h-3 bg-secondary rounded-full relative border-2 border-white"></div>
+<div class="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">London</div>
+</div>
+<div class="absolute top-[35%] right-1/4 group cursor-pointer">
+<div class="w-5 h-5 bg-primary rounded-full relative border-2 border-white"></div>
+<div class="absolute bottom-7 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">Tokyo</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Insight Ribbon Float -->
+<div class="fixed right-8 bottom-8 z-40 bg-white p-4 rounded-2xl shadow-2xl border-l-4 border-primary max-w-xs transition-transform hover:-translate-y-1">
+<div class="flex items-start gap-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<div>
+<h5 class="text-sm font-bold font-headline">Predictive Insight</h5>
+<p class="text-xs text-on-surface-variant mt-1">Churn risk for "Heavy Browsers" increased by 4% this week. Consider an targeted engagement campaign.</p>
+<button class="mt-2 text-xs font-bold text-primary hover:underline">View Campaign Recs</button>
+</div>
+</div>
+</div>
+</body></html>

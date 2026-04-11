@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InsightFlow AI Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "secondary-container": "#b5edea", "tertiary-container": "#ffb347", background: "#f3fbfa", "surface-tint": "#006a68", "outline-variant": "#bacac8", "primary-fixed": "#50f9f6", "on-secondary-container": "#376d6b", "surface-variant": "#dce4e3", tertiary: "#845400", secondary: "#306765", "on-background": "#161d1d", "on-tertiary-fixed-variant": "#643f00", "primary-fixed-dim": "#1adcd9", "inverse-surface": "#2a3231", "surface-container-lowest": "#ffffff", "on-surface-variant": "#3b4949", error: "#ba1a1a", "on-secondary-fixed": "#00201f", "tertiary-fixed-dim": "#ffb95a", "on-error": "#ffffff", primary: "#006a68", "inverse-primary": "#1adcd9", "surface-container-low": "#eef5f4", "on-primary-fixed": "#00201f", "surface-container-highest": "#dce4e3", surface: "#f3fbfa", "on-secondary": "#ffffff", "primary-container": "#05d8d5", "surface-container-high": "#e2eae9", "on-tertiary-fixed": "#2a1800", "error-container": "#ffdad6", "tertiary-fixed": "#ffddb6", outline: "#6b7a79", "inverse-on-surface": "#ebf2f1", "secondary-fixed": "#b5edea", "on-surface": "#161d1d", "on-tertiary": "#ffffff", "on-primary-container": "#005958", "surface-container": "#e8efee", "on-error-container": "#93000a", "surface-dim": "#d4dcda", "surface-bright": "#f3fbfa", "on-secondary-fixed-variant": "#144f4e", "on-tertiary-container": "#704700", "on-primary-fixed-variant": "#00504e", "secondary-fixed-dim": "#9ad1ce"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Inter"], label: ["Inter"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; color: #0b1c30; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col">
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)]">
+<div class="flex items-center justify-between px-8 h-20 w-full max-w-[1920px] mx-auto">
+<div class="flex items-center gap-10">
+<span class="text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50 font-['Manrope'] cursor-pointer">InsightFlow</span>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer" href="#">Overview</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer" href="#">Products</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer" href="#">Customers</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-tight text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer" href="#">Retention</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-tight relative text-blue-600 dark:text-blue-400 after:absolute after:left-0 after:w-full after:h-[2px] after:bg-blue-600 cursor-pointer after:bottom-[-4px]" href="#">Chatbot</a>
+</nav>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all active:scale-95 duration-150 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+</button>
+<button class="p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all active:scale-95 duration-150 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-[22px]">public</span>
+</button>
+<button class="p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all active:scale-95 duration-150 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-[22px]">apps</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden ml-2 ring-2 ring-slate-100 dark:ring-slate-800 duration-300 ease-in-out cursor-pointer active:scale-95">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uLWceqZmxdoiHEaPBlTb7uvblXejWpG7oAhOGa4bgpV1pi-COjHuuc-3zBEfqqZnLNgxRLQfY9rb17RQ4U3K06jilwvMBY0BGw-tJOGXAOf3U0H4noxT4ojnYSsZoyTO0B0Q6KiMp8JEdCQhyLi-p5q9mYliwzdh9xcFpAlfHLxspTpi_RlsqyAn6Qg73xCjAOPhkwqCa4eg8_YUi5nlxOad3faIPx696ZgX40kX2xHaYgNUCj8he_QoyphetQMOsbc_PgazhPg"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow flex p-6 gap-6 max-w-[1600px] mx-auto w-full overflow-hidden h-[calc(100vh-80px)] mt-20">
+<section class="flex-grow flex flex-col bg-surface-container-low rounded-xxl overflow-hidden shadow-sm">
+<div class="flex-grow overflow-y-auto p-8 space-y-8 no-scrollbar">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xxl rounded-tl-none shadow-[0_4px_20px_rgba(0,0,0,0.03)] max-w-2xl">
+<p class="text-on-surface text-sm leading-relaxed font-body">Hello! I'm your InsightFlow AI Assistant. I can help you analyze customer behavior, LTV trends, and product performance. What would you like to explore today?</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="bg-primary text-on-primary p-4 rounded-xxl rounded-tr-none shadow-md max-w-xl">
+<p class="text-sm font-body">Show me the revenue contribution by top customer segments for the last quarter.</p>
+</div>
+<span class="text-xs text-on-surface-variant px-2">10:42 AM</span>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xxl rounded-tl-none shadow-[0_4px_20px_rgba(0,0,0,0.03)] max-w-2xl space-y-4">
+<p class="text-on-surface text-sm leading-relaxed font-body">Based on your revenue data from Q3, the "Enterprise Gold" segment contributed 42% of the total growth. Here's a quick breakdown:</p>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-6">
+<div class="flex-grow">
+<div class="flex justify-between items-end mb-2">
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Enterprise Gold</span>
+<span class="text-sm font-bold text-primary">$1.2M</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[75%]"></div>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-end mb-2">
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Mid-Market</span>
+<span class="text-sm font-bold text-secondary">$640K</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-[40%]"></div>
+</div>
+</div>
+</div>
+<p class="text-on-surface text-sm leading-relaxed font-body">I've noticed a significant uptick in the **Mid-Market** segment's retention rate (up by 12.4%).</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="bg-primary text-on-primary p-4 rounded-xxl rounded-tr-none shadow-md max-w-xl">
+<p class="text-sm font-body">What are the specific recommendations for user Sarah Jenkins in the Enterprise segment?</p>
+</div>
+<span class="text-xs text-on-surface-variant px-2">10:45 AM</span>
+</div>
+</div>
+<div class="p-6 bg-surface-container-lowest/50 border-t border-surface-container">
+<div class="relative max-w-4xl mx-auto">
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary-container rounded-full py-4 pl-6 pr-16 text-on-surface placeholder:text-on-surface-variant/50 shadow-sm transition-all font-body" placeholder="Ask anything about your data..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-container hover:bg-primary text-on-primary p-2.5 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="flex justify-center gap-3 mt-4">
+<button class="text-xs font-medium px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed-dim transition-colors">Analyze Churn Risk</button>
+<button class="text-xs font-medium px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed-dim transition-colors">Revenue Forecast</button>
+<button class="text-xs font-medium px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed-dim transition-colors">Segmentation Report</button>
+</div>
+</div>
+</section>
+<aside class="w-96 flex flex-col gap-6 shrink-0 h-full overflow-y-auto no-scrollbar">
+<div class="bg-surface-container-lowest rounded-xxl p-6 shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary-container"></div>
+<h3 class="font-headline font-semibold text-lg text-on-surface mb-6">Customer Insights</h3>
+<div class="flex items-center gap-4 mb-8">
+<div class="w-14 h-14 rounded-2xl overflow-hidden ring-4 ring-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="professional profile photo of a smiling woman with glasses, light skin, and stylish haircut in a bright minimalist setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrtHahzRjcyHDhcVd7CctbBYEpNLt4K5gjjWgxq49-GY6NZa5HTFdR0VZuFaS2MWriUaALiqnQIYrPSUm3IZEuf6waEg0Xunmd0moWNwNgG1G79g5eiGehSXu_t7dVCF4iaP9PFvUGU46gIgXx4fxtc_Zp2Y0hOJLVuVJlUkYd2ThgU3zpBWXylWA7RgnX_8MCKosWj9kzhdUfk8P2ptHK8HhVCe00J7MevxRBVIPErA7K0cZMgETmEE96XXcBEmUOY6ejaA2Vo2U"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Sarah Jenkins</h4>
+<p class="text-xs font-medium text-on-surface-variant">Lead Architect @ Innovate Corp</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-low p-4 rounded-xl">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-1">LTV Score</span>
+<div class="flex items-end gap-1">
+<span class="text-xl font-bold text-on-surface font-headline">9.8</span>
+<span class="text-[10px] text-secondary font-bold mb-1">/10</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-1">Tier</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface font-headline">Platinum</span>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-3">Persona</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant text-[11px] font-semibold rounded-full">Early Adopter</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant text-[11px] font-semibold rounded-full">Data Driven</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant text-[11px] font-semibold rounded-full">Expansion Target</span>
+</div>
+</div>
+<div class="space-y-4">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block">AI CRM Recommendations</span>
+<div class="flex gap-3 items-start group">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-base">upgrade</span>
+</div>
+<div class="flex-grow border-b border-surface-container pb-3 group-last:border-0">
+<h5 class="text-xs font-bold text-on-surface mb-0.5">Upsell Path</h5>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">Sarah's team usage exceeded 90%. Recommend Enterprise Plus add-on.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start group">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-base">forum</span>
+</div>
+<div class="flex-grow border-b border-surface-container pb-3 group-last:border-0">
+<h5 class="text-xs font-bold text-on-surface mb-0.5">Personalized Outreach</h5>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">Send a customized QBR report highlighting their 15% efficiency gain.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start group">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-base">verified</span>
+</div>
+<div class="flex-grow border-b border-surface-container pb-3 group-last:border-0">
+<h5 class="text-xs font-bold text-on-surface mb-0.5">Advocacy Invite</h5>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">High LTV and sentiment score makes her ideal for the 2024 Case Study program.</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 bg-primary-container text-on-primary py-3 rounded-xl font-headline font-semibold text-sm hover:shadow-lg transition-all active:scale-95">
+                    Sync to Salesforce
+                </button>
+</div>
+<div class="bg-surface-container-highest/30 rounded-xxl p-6 border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-surface-variant">add_chart</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface mb-1">Add to Dashboard</h4>
+<p class="text-[11px] text-on-surface-variant max-w-[200px]">Drag any AI response here to create a permanent monitoring widget.</p>
+</div>
+</aside>
+</main>
+</body></html>

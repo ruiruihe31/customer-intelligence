@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InsightFlow — Customer Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: "#006a68",
+        "primary-container": "#05d8d5",
+        secondary: "#306765",
+        "secondary-container": "#b5edea",
+        tertiary: "#845400",
+        "tertiary-container": "#ffb347",
+        surface: "#f3fbfa",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#eef5f4",
+        "surface-container": "#e8efee",
+        "surface-container-high": "#e2eae9",
+        "surface-container-highest": "#dce4e3",
+        "on-surface": "#161d1d",
+        "on-surface-variant": "#3b4949",
+        "outline-variant": "#bacac8",
+        background: "#f8f9ff",
+        error: "#ba1a1a",
+        "error-container": "#ffdad6",
+      },
+      fontFamily: {
+        headline: ["Manrope", "sans-serif"],
+        body: ["Inter", "sans-serif"],
+      },
+    }
+  }
+};
+</script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #f8f9ff; color: #161d1d; margin: 0; }
+h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
+
+/* Nav */
+.nav-link { font-size: 0.8rem; font-weight: 500; padding: 6px 0; color: #3b4949; text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+.nav-link:hover { color: #006a68; }
+.nav-link.active { color: #006a68; border-bottom-color: #006a68; }
+
+/* Cards */
+.card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 24px; }
+.kpi-card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 20px 22px; position: relative; overflow: hidden; }
+.kpi-ribbon { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #05d8d5; border-radius: 16px 0 0 16px; }
+.kpi-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #3b4949; }
+.kpi-value { font-family: 'Manrope', sans-serif; font-size: 1.9rem; font-weight: 700; color: #161d1d; line-height: 1.1; margin: 6px 0 4px; }
+.kpi-detail { font-size: 0.78rem; color: #3b4949; }
+
+/* Tabs */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Persona card */
+.persona-card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 18px; }
+.persona-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: #006a68; font-weight: 600; }
+.persona-name { font-family: 'Manrope', sans-serif; font-size: 0.95rem; font-weight: 700; color: #161d1d; margin: 6px 0 10px; }
+.persona-stat { font-size: 0.78rem; color: #3b4949; margin: 2px 0; }
+
+/* CRM box */
+.crm-box { background: rgba(0, 106, 104, 0.06); border-radius: 12px; padding: 14px 16px; margin-top: 12px; border-left: 3px solid #006a68; }
+
+/* Tier badge */
+.tier-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; }
+
+/* Chat */
+.chat-bubble-user { background: #006a68; color: #fff; border-radius: 18px 18px 4px 18px; padding: 10px 16px; font-size: 0.875rem; align-self: flex-end; max-width: 75%; }
+.chat-bubble-bot { background: #ffffff; color: #161d1d; border-radius: 18px 18px 18px 4px; padding: 10px 16px; font-size: 0.875rem; align-self: flex-start; max-width: 75%; box-shadow: 0 2px 8px rgba(11,28,48,0.06); }
+.chat-scroll { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* Suggestion chips */
+.chip { background: #eef5f4; border: none; border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; color: #006a68; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+.chip:hover { background: #b5edea; }
+
+/* Retention heatmap cell coloring done via Plotly */
+
+/* Spinner */
+.spinner { width: 36px; height: 36px; border: 3px solid #e8efee; border-top-color: #006a68; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 60px auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Section title */
+.section-title { font-family: 'Manrope', sans-serif; font-size: 1.4rem; font-weight: 700; color: #161d1d; }
+.section-sub { font-size: 0.82rem; color: #3b4949; margin-top: 2px; }
+
+/* Button */
+.btn-primary { background: #006a68; color: #fff; border: none; border-radius: 12px; padding: 10px 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+.btn-primary:hover { opacity: 0.88; }
+.btn-outline { background: #fff; color: #006a68; border: 1px solid rgba(186,202,200,0.5); border-radius: 12px; padding: 8px 16px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+.btn-outline:hover { background: #eef5f4; }
+
+/* Input */
+.search-input { background: #fff; border: 1px solid rgba(186,202,200,0.5); border-radius: 12px; padding: 10px 16px; font-size: 0.875rem; width: 100%; outline: none; font-family: 'Inter', sans-serif; transition: border-color 0.15s, box-shadow 0.15s; }
+.search-input:focus { border-color: #006a68; box-shadow: 0 0 0 3px rgba(0,106,104,0.12); }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.data-table th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: #3b4949; font-weight: 600; padding: 8px 12px; text-align: left; }
+.data-table td { padding: 10px 12px; color: #161d1d; }
+.data-table tr:nth-child(odd) td { background: #f8f9ff; }
+.data-table tr:nth-child(even) td { background: #fff; }
+.data-table tr:first-child td { border-radius: 0; }
+
+/* Insight ribbon accent */
+.insight-ribbon { border-left: 4px solid #05d8d5; padding-left: 14px; }
+
+/* Loading overlay */
+#loading-overlay { position: fixed; inset: 0; background: #f8f9ff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
+#loading-overlay .logo { font-family: 'Manrope', sans-serif; font-size: 1.5rem; font-weight: 800; color: #006a68; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loading-overlay">
+  <div class="logo">InsightFlow</div>
+  <div class="spinner"></div>
+  <p style="font-size:0.85rem;color:#3b4949;margin-top:12px;">Loading analytics data…</p>
+</div>
+
+<!-- Top Navigation -->
+<nav style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);box-shadow:0 4px 24px -4px rgba(11,28,48,0.07);padding:0 32px;">
+  <div style="max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:56px;">
+    <div style="display:flex;align-items:center;gap:32px;">
+      <span style="font-family:'Manrope',sans-serif;font-size:1.1rem;font-weight:800;color:#006a68;letter-spacing:-0.02em;">InsightFlow</span>
+      <div style="display:flex;gap:24px;align-items:center;">
+        <a class="nav-link active" href="#" data-tab="overview">Overview</a>
+        <a class="nav-link" href="#" data-tab="products">Products</a>
+        <a class="nav-link" href="#" data-tab="customers">Customers</a>
+        <a class="nav-link" href="#" data-tab="retention">Retention</a>
+        <a class="nav-link" href="#" data-tab="chatbot">Chatbot</a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:#05d8d5;display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-size:0.75rem;font-weight:700;color:#fff;">AI</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main content -->
+<main style="max-width:1400px;margin:0 auto;padding:32px;display:none;" id="main-content">
+
+  <!-- ══════════════ OVERVIEW ══════════════ -->
+  <div class="tab-panel active" id="tab-overview">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+      <div>
+        <h1 class="section-title">Overview Dashboard</h1>
+        <p class="section-sub">Real-time performance analytics for your platform.</p>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div id="kpi-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:28px;">
+      <div class="kpi-card"><div class="kpi-ribbon"></div><div class="kpi-label">Customers</div><div class="kpi-value" id="kpi-customers">—</div><div class="kpi-detail" id="kpi-customers-d">—</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#ffb347;"></div><div class="kpi-label">Sessions</div><div class="kpi-value" id="kpi-sessions">—</div><div class="kpi-detail" id="kpi-sessions-d">—</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#306765;"></div><div class="kpi-label">Orders</div><div class="kpi-value" id="kpi-orders">—</div><div class="kpi-detail" id="kpi-orders-d">—</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#006a68;"></div><div class="kpi-label">Revenue</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-detail" id="kpi-revenue-d">—</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#845400;"></div><div class="kpi-label">Conversion</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-detail" id="kpi-conversion-d">—</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#b5edea;"></div><div class="kpi-label">Avg Rating</div><div class="kpi-value" id="kpi-rating">—</div><div class="kpi-detail" id="kpi-rating-d">—</div></div>
+    </div>
+
+    <!-- Revenue Trend -->
+    <div class="card" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div>
+          <div class="section-title" style="font-size:1rem;">Monthly Revenue Trend</div>
+          <div class="section-sub">Performance tracking against 3-month rolling average</div>
+        </div>
+      </div>
+      <div id="chart-revenue-trend"></div>
+    </div>
+
+    <!-- Active Users & Geo -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Active Users vs Sessions</div>
+        <div class="section-sub" style="margin-bottom:16px;">Monthly active users and session volume</div>
+        <div id="chart-users-sessions"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Global Revenue Heatmap</div>
+        <div class="section-sub" style="margin-bottom:16px;">Revenue contribution by country</div>
+        <div id="chart-geo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ PRODUCTS ══════════════ -->
+  <div class="tab-panel" id="tab-products">
+    <div style="margin-bottom:28px;">
+      <h1 class="section-title">Product Performance</h1>
+      <p class="section-sub">Sales rankings, sentiment analysis, and category insights.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top 10 Products by Sales</div>
+        <div id="chart-sales-rank"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top Rated Products</div>
+        <div id="chart-rating-rank"></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Sentiment Analysis</div>
+        <div class="section-sub" style="margin-bottom:16px;">Positive / Neutral / Negative by category (VADER)</div>
+        <div id="chart-sentiment"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Rating vs Revenue by Category</div>
+        <div class="section-sub" style="margin-bottom:16px;">Bubble size = units sold</div>
+        <div id="chart-category-bubble"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Category Revenue Trend</div>
+      <div class="section-sub" style="margin-bottom:16px;">Monthly revenue by product category</div>
+      <div id="chart-category-trend"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div>
+          <div class="section-title" style="font-size:1rem;">Detailed Inventory Insights</div>
+          <div class="section-sub">Top products by revenue performance</div>
+        </div>
+      </div>
+      <div id="top-products-table"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CUSTOMERS ══════════════ -->
+  <div class="tab-panel" id="tab-customers">
+    <div style="margin-bottom:28px;">
+      <h1 class="section-title">Customer Insights</h1>
+      <p class="section-sub">Segmentation, behavior analysis, and funnel performance.</p>
+    </div>
+
+    <!-- Persona cards -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="section-title" style="font-size:1rem;margin-bottom:16px;">Customer Personas</div>
+      <div id="persona-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;"></div>
+    </div>
+
+    <!-- Cluster + RFM -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Customer Clustering</div>
+        <div class="section-sub" style="margin-bottom:16px;">PCA 2D projection of behavioral features</div>
+        <div id="chart-cluster-scatter"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">RFM Segments</div>
+        <div class="section-sub" style="margin-bottom:16px;">Customer count and revenue by RFM segment</div>
+        <div id="chart-rfm"></div>
+      </div>
+    </div>
+
+    <!-- Lifecycle + Funnel -->
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:24px;margin-bottom:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Lifecycle Stages</div>
+        <div class="section-sub" style="margin-bottom:16px;">Customer distribution by lifecycle</div>
+        <div id="chart-lifecycle"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Conversion Funnel</div>
+        <div class="section-sub" style="margin-bottom:16px;">Session-level drop-off analysis</div>
+        <div id="chart-funnel"></div>
+      </div>
+    </div>
+
+    <!-- Device + Source heatmap -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Conversion by Device &amp; Source</div>
+      <div class="section-sub" style="margin-bottom:16px;">Stage-by-stage conversion rates across segments</div>
+      <div id="chart-segment-heatmap"></div>
+    </div>
+
+    <!-- Demographics -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Demographics Breakdown</div>
+        <div class="section-sub" style="margin-bottom:16px;">Region × Gender × Age Sunburst</div>
+        <div id="chart-sunburst"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Age &amp; Gender Distribution</div>
+        <div class="section-sub" style="margin-bottom:16px;">Population pyramid by age group</div>
+        <div id="chart-age-pyramid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ RETENTION ══════════════ -->
+  <div class="tab-panel" id="tab-retention">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+      <div>
+        <h1 class="section-title">Retention Analysis</h1>
+        <p class="section-sub">Analyze cohort behavior and user stickiness across time intervals.</p>
+      </div>
+    </div>
+
+    <!-- Retention KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;">
+      <div class="kpi-card"><div class="kpi-ribbon"></div><div class="kpi-label">Avg Customer Lifespan</div><div class="kpi-value" id="ret-lifespan">—</div><div class="kpi-detail">Months active</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#ffb347;"></div><div class="kpi-label">M1 Session Retention</div><div class="kpi-value" id="ret-m1-session">—</div><div class="kpi-detail">Avg across cohorts</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#306765;"></div><div class="kpi-label">M1 Purchase Retention</div><div class="kpi-value" id="ret-m1-purchase">—</div><div class="kpi-detail">Avg across cohorts</div></div>
+      <div class="kpi-card"><div class="kpi-ribbon" style="background:#845400;"></div><div class="kpi-label">Cohorts Tracked</div><div class="kpi-value" id="ret-cohorts">—</div><div class="kpi-detail">Signup months</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Session Retention Cohort</div>
+        <div class="section-sub" style="margin-bottom:16px;">Monthly cohort performance — session-based</div>
+        <div id="chart-retention-session"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Purchase Retention Cohort</div>
+        <div class="section-sub" style="margin-bottom:16px;">Monthly cohort performance — order-based</div>
+        <div id="chart-retention-purchase"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CHATBOT ══════════════ -->
+  <div class="tab-panel" id="tab-chatbot">
+    <div style="margin-bottom:28px;">
+      <h1 class="section-title">AI Data Assistant</h1>
+      <p class="section-sub">Ask questions about your data or look up a specific customer profile.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;">
+
+      <!-- Chat panel -->
+      <div class="card" style="display:flex;flex-direction:column;height:640px;">
+        <!-- Bot intro -->
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;padding:16px;background:#eef5f4;border-radius:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#006a68;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 1 5 5v1h1a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-7a3 3 0 0 1 3-3h1V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v1h6V7a3 3 0 0 0-3-3zm0 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="#fff"/></svg>
+          </div>
+          <p style="font-size:0.875rem;color:#161d1d;margin:0;line-height:1.5;">Hello! I'm the InsightFlow AI Assistant. I can help you analyze customer behavior, revenue trends, product performance, and more. What would you like to explore today?</p>
+        </div>
+
+        <!-- Suggestion chips -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+          <button class="chip" onclick="sendSuggestion(this)">Total revenue this period</button>
+          <button class="chip" onclick="sendSuggestion(this)">How many customers do we have?</button>
+          <button class="chip" onclick="sendSuggestion(this)">Top selling products</button>
+          <button class="chip" onclick="sendSuggestion(this)">Retention rate overview</button>
+        </div>
+
+        <!-- Chat messages -->
+        <div class="chat-scroll" id="chat-messages" style="flex:1;padding:4px 0;min-height:0;"></div>
+
+        <!-- Input -->
+        <div style="display:flex;gap:10px;margin-top:16px;border-top:1px solid #eef5f4;padding-top:16px;">
+          <input class="search-input" id="chat-input" placeholder="Ask anything about your data…" onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;"/>
+          <button class="btn-primary" onclick="sendChat()" style="flex-shrink:0;padding:10px 18px;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Customer Insights Sidebar -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="section-title" style="font-size:1rem;margin-bottom:14px;">Customer Lookup</div>
+          <div style="display:flex;gap:8px;">
+            <input class="search-input" id="cid-input" placeholder="Enter Customer ID…" style="flex:1;" onkeydown="if(event.key==='Enter')lookupCustomer()"/>
+            <button class="btn-primary" onclick="lookupCustomer()">Search</button>
+          </div>
+          <div id="customer-result" style="margin-top:16px;"></div>
+        </div>
+
+        <!-- CRM Reference -->
+        <div class="card">
+          <div class="section-title" style="font-size:0.9rem;margin-bottom:12px;">CRM Recommendations</div>
+          <div style="font-size:0.78rem;color:#3b4949;line-height:1.6;">
+            <div class="insight-ribbon" style="margin-bottom:8px;"><b>Champions</b> — VIP events + new product priority access</div>
+            <div class="insight-ribbon" style="margin-bottom:8px;border-left-color:#ffb347;"><b>At-Risk High Value</b> — Urgent win-back + targeted discount</div>
+            <div class="insight-ribbon" style="margin-bottom:8px;border-left-color:#306765;"><b>Cooling Down</b> — "We miss you" email + exclusive discount</div>
+            <div class="insight-ribbon" style="margin-bottom:8px;border-left-color:#845400;"><b>New Visitor</b> — Welcome email + first-order discount code</div>
+            <div class="insight-ribbon" style="border-left-color:#b5edea;"><b>Promotion Sensitive</b> — Flash sales; avoid full-price messaging</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const API = '';
+const COLORS = ['#006a68','#05d8d5','#ffb347','#306765','#845400','#b5edea','#a5c8c7'];
+const PLOTLY_LAYOUT = {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0)',
+  font: { family: 'Inter, sans-serif', color: '#161d1d', size: 12 },
+  margin: { t: 20, b: 40, l: 50, r: 20 },
+  showlegend: true,
+  legend: { orientation: 'h', y: -0.2, font: { size: 11 } },
+};
+const PLOTLY_CONFIG = { displayModeBar: false, responsive: true };
+
+// ── Tab navigation ─────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const tab = link.dataset.tab;
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    link.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  });
+});
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US', {maximumFractionDigits: 0});
+const fmtCur = n => n == null ? '—' : '$' + (n >= 1e6 ? (n/1e6).toFixed(2)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : n.toFixed(0));
+const fmtPct = n => n == null ? '—' : (n * 100).toFixed(1) + '%';
+
+async function apiFetch(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error(`API ${path} → ${r.status}`);
+  return r.json();
+}
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+async function boot() {
+  try {
+    const [kpis, monthly, geo, rfm, lifecycle, personas, cluster, sentiment, categories, retention, funnel, demographics] = await Promise.all([
+      apiFetch('/api/kpis'),
+      apiFetch('/api/monthly'),
+      apiFetch('/api/geography'),
+      apiFetch('/api/customers/rfm'),
+      apiFetch('/api/customers/lifecycle'),
+      apiFetch('/api/customers/personas'),
+      apiFetch('/api/customers/cluster'),
+      apiFetch('/api/products/sentiment'),
+      apiFetch('/api/products/categories'),
+      apiFetch('/api/retention'),
+      apiFetch('/api/funnel'),
+      apiFetch('/api/customers/demographics'),
+    ]);
+
+    renderKPIs(kpis);
+    renderRevenueTrend(monthly);
+    renderUserSessions(monthly);
+    renderGeo(geo);
+    renderSalesRank(categories.top_products);
+    renderRatingRank(categories.top_products);
+    renderSentiment(sentiment);
+    renderCategoryBubble(categories.performance);
+    renderCategoryTrend(categories.monthly);
+    renderTopProductsTable(categories.top_products);
+    renderPersonaCards(personas);
+    renderClusterScatter(cluster.scatter);
+    renderRFMBar(rfm);
+    renderLifecycleDonut(lifecycle);
+    renderFunnel(funnel.overall);
+    renderSegmentHeatmap(funnel.device, funnel.source);
+    renderSunburst(demographics.sunburst);
+    renderAgePyramid(demographics.age_gender);
+    renderRetention('session', retention.session);
+    renderRetention('purchase', retention.purchase);
+    renderRetentionKPIs(retention);
+
+    document.getElementById('loading-overlay').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+  } catch (err) {
+    document.getElementById('loading-overlay').innerHTML = `
+      <div class="logo">InsightFlow</div>
+      <p style="color:#ba1a1a;font-size:0.9rem;max-width:400px;text-align:center;">
+        Could not connect to the API.<br>
+        <b>Run:</b> <code style="background:#eef5f4;padding:2px 8px;border-radius:6px;">uvicorn api.main:app --reload</code><br>
+        from the <code>Customer/</code> project root, then refresh.
+      </p>`;
+  }
+}
+
+// ── KPIs ───────────────────────────────────────────────────────────────────
+function renderKPIs(d) {
+  document.getElementById('kpi-customers').textContent = fmt(d.customers);
+  document.getElementById('kpi-customers-d').textContent = 'Total registered';
+  document.getElementById('kpi-sessions').textContent = fmt(d.sessions);
+  document.getElementById('kpi-sessions-d').textContent = 'Total sessions';
+  document.getElementById('kpi-orders').textContent = fmt(d.orders);
+  document.getElementById('kpi-orders-d').textContent = 'Total orders';
+  document.getElementById('kpi-revenue').textContent = fmtCur(d.revenue);
+  document.getElementById('kpi-revenue-d').textContent = 'AOV ' + fmtCur(d.aov);
+  document.getElementById('kpi-conversion').textContent = fmtPct(d.conversion_rate);
+  document.getElementById('kpi-conversion-d').textContent = 'Session → purchase';
+  document.getElementById('kpi-rating').textContent = (d.avg_rating||0).toFixed(2);
+  document.getElementById('kpi-rating-d').textContent = 'Average review rating';
+}
+
+// ── Revenue Trend ──────────────────────────────────────────────────────────
+function renderRevenueTrend(monthly) {
+  const months = monthly.map(r => r.month);
+  const revenue = monthly.map(r => r.revenue);
+  const rolling = monthly.map(r => r.rolling_revenue_3m);
+  Plotly.newPlot('chart-revenue-trend', [
+    { x: months, y: revenue, type: 'scatter', mode: 'lines+markers', name: 'Monthly Revenue',
+      line: { color: '#006a68', width: 2.5 }, marker: { color: '#006a68', size: 5 },
+      fill: 'tozeroy', fillcolor: 'rgba(0,106,104,0.07)' },
+    { x: months, y: rolling, type: 'scatter', mode: 'lines', name: '3M Rolling Avg',
+      line: { color: '#ffb347', width: 2, dash: 'dot' } },
+  ], { ...PLOTLY_LAYOUT, height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee', zeroline: false }, xaxis: { gridcolor: '#e8efee' } }, PLOTLY_CONFIG);
+}
+
+// ── Users & Sessions ───────────────────────────────────────────────────────
+function renderUserSessions(monthly) {
+  const months = monthly.map(r => r.month);
+  Plotly.newPlot('chart-users-sessions', [
+    { x: months, y: monthly.map(r => r.active_users), type: 'scatter', mode: 'lines+markers', name: 'Active Users',
+      line: { color: '#006a68', width: 2 }, marker: { size: 4 } },
+    { x: months, y: monthly.map(r => r.sessions), type: 'scatter', mode: 'lines+markers', name: 'Sessions',
+      line: { color: '#05d8d5', width: 2, dash: 'dash' }, marker: { size: 4 },
+      yaxis: 'y2' },
+  ], { ...PLOTLY_LAYOUT, height: 280,
+    yaxis: { gridcolor: '#e8efee', zeroline: false, title: 'Active Users' },
+    yaxis2: { overlaying: 'y', side: 'right', title: 'Sessions', gridcolor: 'transparent', zeroline: false },
+    xaxis: { gridcolor: '#e8efee' },
+  }, PLOTLY_CONFIG);
+}
+
+// ── Geo Map ────────────────────────────────────────────────────────────────
+function renderGeo(geo) {
+  Plotly.newPlot('chart-geo', [{
+    type: 'choropleth', locationmode: 'ISO-3',
+    locations: geo.map(r => r.country),
+    z: geo.map(r => r.revenue),
+    text: geo.map(r => `${r.country_name || r.country}<br>Revenue: ${fmtCur(r.revenue)}<br>Orders: ${fmt(r.orders)}`),
+    hovertemplate: '%{text}<extra></extra>',
+    colorscale: [[0,'#eef5f4'],[0.5,'#05d8d5'],[1,'#006a68']],
+    showscale: true,
+    colorbar: { len: 0.6, thickness: 12, tickprefix: '$', tickformat: ',.0f', title: { text: 'Revenue', side: 'right' } },
+  }], { ...PLOTLY_LAYOUT, height: 280, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 10 } }, PLOTLY_CONFIG);
+}
+
+// ── Sales Rank ─────────────────────────────────────────────────────────────
+function renderSalesRank(products) {
+  const top = [...products].sort((a,b) => (b.total_qty||b.units||0)-(a.total_qty||a.units||0)).slice(0,10);
+  Plotly.newPlot('chart-sales-rank', [{
+    type: 'bar', orientation: 'h',
+    x: top.map(p => p.total_qty||p.units||0).reverse(),
+    y: top.map(p => (p.name||'').substring(0,30)).reverse(),
+    marker: { color: top.map((_,i) => COLORS[i%COLORS.length]).reverse() },
+    hovertemplate: '%{y}: %{x} units<extra></extra>',
+  }], { ...PLOTLY_LAYOUT, height: 320, xaxis: { title: 'Units Sold', gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: 10 } }, margin: { ...PLOTLY_LAYOUT.margin, l: 160 } }, PLOTLY_CONFIG);
+}
+
+// ── Rating Rank ────────────────────────────────────────────────────────────
+function renderRatingRank(products) {
+  const top = [...products].filter(p => p.avg_rating > 0).sort((a,b) => b.avg_rating - a.avg_rating).slice(0,10);
+  Plotly.newPlot('chart-rating-rank', [{
+    type: 'bar', orientation: 'h',
+    x: top.map(p => p.avg_rating).reverse(),
+    y: top.map(p => (p.name||'').substring(0,30)).reverse(),
+    marker: { color: '#05d8d5' },
+    hovertemplate: '%{y}: %{x:.2f} ★<extra></extra>',
+  }], { ...PLOTLY_LAYOUT, height: 320, xaxis: { title: 'Avg Rating', range: [0, 5.5], gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: 10 } }, margin: { ...PLOTLY_LAYOUT.margin, l: 160 } }, PLOTLY_CONFIG);
+}
+
+// ── Sentiment ──────────────────────────────────────────────────────────────
+function renderSentiment(sentiment) {
+  const cats = sentiment.map(r => r.category);
+  Plotly.newPlot('chart-sentiment', [
+    { type: 'bar', name: 'Positive', x: cats, y: sentiment.map(r => r.Positive||0), marker: { color: '#006a68' } },
+    { type: 'bar', name: 'Neutral',  x: cats, y: sentiment.map(r => r.Neutral||0),  marker: { color: '#b5edea' } },
+    { type: 'bar', name: 'Negative', x: cats, y: sentiment.map(r => r.Negative||0), marker: { color: '#ffb347' } },
+  ], { ...PLOTLY_LAYOUT, barmode: 'stack', height: 300, yaxis: { ticksuffix: '%', gridcolor: '#e8efee' }, xaxis: { tickfont: { size: 10 } } }, PLOTLY_CONFIG);
+}
+
+// ── Category Bubble ────────────────────────────────────────────────────────
+function renderCategoryBubble(perf) {
+  Plotly.newPlot('chart-category-bubble', [{
+    type: 'scatter', mode: 'markers+text',
+    x: perf.map(r => r.avg_rating||0),
+    y: perf.map(r => r.revenue||0),
+    text: perf.map(r => r.category||r.index||''),
+    textposition: 'top center',
+    marker: { size: perf.map(r => Math.sqrt(r.units||1)*3), color: COLORS, opacity: 0.8, sizemode: 'diameter' },
+    hovertemplate: '<b>%{text}</b><br>Rating: %{x:.2f}<br>Revenue: $%{y:,.0f}<extra></extra>',
+  }], { ...PLOTLY_LAYOUT, height: 300, xaxis: { title: 'Avg Rating', gridcolor: '#e8efee', range: [0, 5.5] }, yaxis: { title: 'Revenue (USD)', tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' }, showlegend: false }, PLOTLY_CONFIG);
+}
+
+// ── Category Trend ─────────────────────────────────────────────────────────
+function renderCategoryTrend(monthly) {
+  const cats = [...new Set(monthly.map(r => r.category))];
+  const months = [...new Set(monthly.map(r => r.month))].sort();
+  const traces = cats.map((cat, i) => ({
+    type: 'scatter', mode: 'lines', name: cat,
+    x: months,
+    y: months.map(m => { const row = monthly.find(r => r.category===cat && r.month===m); return row ? row.revenue : 0; }),
+    line: { color: COLORS[i%COLORS.length], width: 2 },
+    stackgroup: 'one',
+    fillcolor: COLORS[i%COLORS.length],
+  }));
+  Plotly.newPlot('chart-category-trend', traces, { ...PLOTLY_LAYOUT, height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' }, xaxis: { gridcolor: '#e8efee' } }, PLOTLY_CONFIG);
+}
+
+// ── Top Products Table ─────────────────────────────────────────────────────
+function renderTopProductsTable(products) {
+  const top = [...products].sort((a,b) => (b.total_revenue||b.revenue||0)-(a.total_revenue||a.revenue||0)).slice(0,12);
+  const el = document.getElementById('top-products-table');
+  el.innerHTML = `<table class="data-table">
+    <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Revenue</th><th>Units</th><th>Rating</th></tr></thead>
+    <tbody>${top.map((p,i) => `<tr>
+      <td style="color:#3b4949;font-weight:600;">${i+1}</td>
+      <td style="font-weight:500;">${p.name||'—'}</td>
+      <td><span style="background:#eef5f4;color:#006a68;font-size:0.72rem;padding:2px 8px;border-radius:20px;">${p.category||'—'}</span></td>
+      <td>${fmtCur(p.total_revenue||p.revenue||0)}</td>
+      <td>${fmt(p.total_qty||p.units||0)}</td>
+      <td>${(p.avg_rating||0).toFixed(2)} ★</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// ── Persona Cards ──────────────────────────────────────────────────────────
+function renderPersonaCards(personas) {
+  const el = document.getElementById('persona-cards');
+  el.innerHTML = personas.map(p => `
+    <div class="persona-card">
+      <div class="persona-label">Persona</div>
+      <div class="persona-name">${p.cluster_name||'—'}</div>
+      <div class="persona-stat"><b>${p.users}</b> users</div>
+      <div class="persona-stat">Revenue/user: <b>${p.revenue}</b></div>
+      <div class="persona-stat">Orders/user: <b>${p.orders}</b></div>
+      <div class="persona-stat">Conversion: <b>${p.conversion}</b></div>
+      <div class="persona-stat">Avg age: <b>${p.avg_age}</b></div>
+      <div style="margin-top:8px;font-size:0.72rem;color:#3b4949;">${p.top_region||''} / ${p.top_source||''}</div>
+    </div>`).join('');
+}
+
+// ── Cluster Scatter ────────────────────────────────────────────────────────
+function renderClusterScatter(scatter) {
+  const clusterNames = [...new Set(scatter.map(r => r.cluster_name))];
+  const traces = clusterNames.map((name, i) => {
+    const pts = scatter.filter(r => r.cluster_name === name);
+    return { type: 'scatter', mode: 'markers', name,
+      x: pts.map(r => r.cluster_x), y: pts.map(r => r.cluster_y),
+      marker: { color: COLORS[i%COLORS.length], size: 5, opacity: 0.65 },
+      hovertemplate: `<b>${name}</b><extra></extra>`,
+    };
+  });
+  Plotly.newPlot('chart-cluster-scatter', traces, { ...PLOTLY_LAYOUT, height: 320, xaxis: { title: 'PC1', gridcolor: '#e8efee', zeroline: false }, yaxis: { title: 'PC2', gridcolor: '#e8efee', zeroline: false } }, PLOTLY_CONFIG);
+}
+
+// ── RFM Bar ────────────────────────────────────────────────────────────────
+function renderRFMBar(rfm) {
+  const segs = rfm.map(r => r.rfm_segment);
+  Plotly.newPlot('chart-rfm', [
+    { type: 'bar', name: 'Customers', x: segs, y: rfm.map(r => r.customers||r.count||0), marker: { color: '#006a68' }, yaxis: 'y' },
+    { type: 'bar', name: 'Revenue', x: segs, y: rfm.map(r => r.revenue||0), marker: { color: '#ffb347' }, yaxis: 'y2' },
+  ], { ...PLOTLY_LAYOUT, height: 320, barmode: 'group',
+    yaxis: { title: 'Customers', gridcolor: '#e8efee' },
+    yaxis2: { overlaying: 'y', side: 'right', title: 'Revenue ($)', tickprefix: '$', tickformat: ',.0f', gridcolor: 'transparent' },
+    xaxis: { tickangle: -30, tickfont: { size: 10 } },
+  }, PLOTLY_CONFIG);
+}
+
+// ── Lifecycle Donut ────────────────────────────────────────────────────────
+function renderLifecycleDonut(lifecycle) {
+  Plotly.newPlot('chart-lifecycle', [{
+    type: 'pie', hole: 0.55,
+    labels: lifecycle.map(r => r.lifecycle_stage),
+    values: lifecycle.map(r => r.customers||r.count||0),
+    marker: { colors: COLORS },
+    textinfo: 'percent',
+    hovertemplate: '<b>%{label}</b><br>%{value} customers (%{percent})<extra></extra>',
+  }], { ...PLOTLY_LAYOUT, height: 320, margin: { t: 20, b: 20, l: 20, r: 20 } }, PLOTLY_CONFIG);
+}
+
+// ── Funnel ─────────────────────────────────────────────────────────────────
+function renderFunnel(overall) {
+  const stages = overall.map(r => r.stage);
+  const values = overall.map(r => r.sessions);
+  Plotly.newPlot('chart-funnel', [{
+    type: 'funnel',
+    y: stages, x: values,
+    textinfo: 'value+percent initial',
+    marker: { color: ['#006a68','#05d8d5','#b5edea','#306765'] },
+    connector: { line: { color: '#bacac8', width: 1 } },
+  }], { ...PLOTLY_LAYOUT, height: 320, funnelmode: 'stack', margin: { t: 10, b: 10, l: 120, r: 80 } }, PLOTLY_CONFIG);
+}
+
+// ── Segment Heatmap ────────────────────────────────────────────────────────
+function renderSegmentHeatmap(device, source) {
+  const stages = ['page_view','add_to_cart','checkout','purchase'];
+  const stageLabels = ['Page View','Add to Cart','Checkout','Purchase'];
+  const deviceLabels = device.map(r => r.device);
+  const sourceLabels = source.map(r => r.source);
+  const devVals = stages.map(s => device.map(r => +(r[s]||0)*100));
+  const srcVals = stages.map(s => source.map(r => +(r[s]||0)*100));
+
+  Plotly.newPlot('chart-segment-heatmap', [
+    { type: 'heatmap', x: deviceLabels, y: stageLabels,
+      z: devVals, colorscale: [[0,'#eef5f4'],[1,'#006a68']], showscale: false,
+      hovertemplate: 'Device: %{x}<br>Stage: %{y}<br>Rate: %{z:.1f}%<extra></extra>',
+      xaxis: 'x', yaxis: 'y', name: 'Device',
+    },
+    { type: 'heatmap', x: sourceLabels, y: stageLabels,
+      z: srcVals, colorscale: [[0,'#fff7eb'],[1,'#845400']], showscale: false,
+      hovertemplate: 'Source: %{x}<br>Stage: %{y}<br>Rate: %{z:.1f}%<extra></extra>',
+      xaxis: 'x2', yaxis: 'y', name: 'Source',
+    },
+  ], { ...PLOTLY_LAYOUT, height: 280,
+    grid: { rows: 1, columns: 2, pattern: 'independent' },
+    xaxis: { domain: [0, 0.44], title: 'Device' },
+    xaxis2: { domain: [0.56, 1], title: 'Traffic Source' },
+    yaxis: { automargin: true },
+    annotations: [
+      { text: 'Device Conversion', x: 0.22, xref: 'paper', y: 1.06, yref: 'paper', showarrow: false, font: { size: 11, family: 'Manrope', color: '#3b4949' } },
+      { text: 'Source Conversion', x: 0.78, xref: 'paper', y: 1.06, yref: 'paper', showarrow: false, font: { size: 11, family: 'Manrope', color: '#3b4949' } },
+    ],
+    showlegend: false,
+  }, PLOTLY_CONFIG);
+}
+
+// ── Sunburst ───────────────────────────────────────────────────────────────
+function renderSunburst(sunburst) {
+  const ids = [], labels = [], parents = [], values = [];
+  const regions = [...new Set(sunburst.map(r => r.region))];
+  regions.forEach(reg => {
+    ids.push(reg); labels.push(reg); parents.push(''); values.push(0);
+    const genders = [...new Set(sunburst.filter(r => r.region===reg).map(r => r.gender_inferred))];
+    genders.forEach(gen => {
+      const gid = `${reg}|${gen}`;
+      const tot = sunburst.filter(r => r.region===reg && r.gender_inferred===gen).reduce((s,r)=>s+r.users,0);
+      ids.push(gid); labels.push(gen); parents.push(reg); values.push(tot);
+      sunburst.filter(r => r.region===reg && r.gender_inferred===gen).forEach(r => {
+        ids.push(`${gid}|${r.age_band}`); labels.push(r.age_band); parents.push(gid); values.push(r.users);
+      });
+    });
+  });
+  Plotly.newPlot('chart-sunburst', [{ type:'sunburst', ids, labels, parents, values, branchvalues:'total', marker:{ colorscale:'Teal' }, hovertemplate:'<b>%{label}</b><br>%{value} users<extra></extra>' }], { ...PLOTLY_LAYOUT, height: 340, margin:{t:10,b:10,l:10,r:10}, showlegend:false }, PLOTLY_CONFIG);
+}
+
+// ── Age Pyramid ────────────────────────────────────────────────────────────
+function renderAgePyramid(age_gender) {
+  const male = age_gender.filter(r => r.gender_inferred==='Male');
+  const female = age_gender.filter(r => r.gender_inferred==='Female');
+  const ages = [...new Set(age_gender.map(r => r.age_band))];
+  Plotly.newPlot('chart-age-pyramid', [
+    { type:'bar', orientation:'h', name:'Male', x: ages.map(a => { const r=male.find(m=>m.age_band===a); return r ? -Math.abs(r.users) : 0; }), y: ages, marker:{color:'#006a68'} },
+    { type:'bar', orientation:'h', name:'Female', x: ages.map(a => { const r=female.find(f=>f.age_band===a); return r ? r.users : 0; }), y: ages, marker:{color:'#05d8d5'} },
+  ], { ...PLOTLY_LAYOUT, height: 340, barmode:'overlay', xaxis:{title:'Users', tickformat:',.0f', zeroline:true, zerolinecolor:'#bacac8', gridcolor:'#e8efee'}, yaxis:{automargin:true} }, PLOTLY_CONFIG);
+}
+
+// ── Retention Heatmap ──────────────────────────────────────────────────────
+function renderRetention(type, data) {
+  const { cohorts, months, values } = data;
+  const zText = values.map(row => row.map(v => v == null ? '' : (v*100).toFixed(0)+'%'));
+  Plotly.newPlot(`chart-retention-${type}`, [{
+    type: 'heatmap',
+    x: months.map(m => 'M' + m),
+    y: cohorts,
+    z: values,
+    text: zText,
+    texttemplate: '%{text}',
+    textfont: { size: 10, color: '#161d1d' },
+    colorscale: [[0,'#eef5f4'],[0.5,'#05d8d5'],[1,'#006a68']],
+    showscale: true,
+    zmin: 0, zmax: 1,
+    colorbar: { tickformat: ',.0%', len: 0.6, thickness: 12 },
+    hovertemplate: 'Cohort: %{y}<br>Month: %{x}<br>Retention: %{z:.1%}<extra></extra>',
+  }], { ...PLOTLY_LAYOUT, height: 380, xaxis: { tickfont: { size: 10 } }, yaxis: { automargin: true, tickfont: { size: 10 } }, margin: { t: 20, b: 40, l: 90, r: 80 } }, PLOTLY_CONFIG);
+}
+
+// ── Retention KPIs ─────────────────────────────────────────────────────────
+function renderRetentionKPIs(ret) {
+  // Avg M1 session retention
+  const sVals = ret.session.values.map(row => row[1]).filter(v => v != null);
+  const pVals = ret.purchase.values.map(row => row[1]).filter(v => v != null);
+  const avgSM1 = sVals.length ? sVals.reduce((a,b)=>a+b,0)/sVals.length : null;
+  const avgPM1 = pVals.length ? pVals.reduce((a,b)=>a+b,0)/pVals.length : null;
+  document.getElementById('ret-lifespan').textContent = '—';
+  document.getElementById('ret-m1-session').textContent = avgSM1 ? fmtPct(avgSM1) : '—';
+  document.getElementById('ret-m1-purchase').textContent = avgPM1 ? fmtPct(avgPM1) : '—';
+  document.getElementById('ret-cohorts').textContent = ret.session.cohorts.length;
+}
+
+// ── Chatbot ────────────────────────────────────────────────────────────────
+function appendMessage(role, text) {
+  const el = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot';
+  div.textContent = text;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  appendMessage('user', q);
+  appendMessage('bot', '…');
+  try {
+    const r = await fetch(API + '/api/chatbot/query', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question: q}) });
+    const data = await r.json();
+    document.querySelectorAll('#chat-messages .chat-bubble-bot').forEach((b,i,arr) => { if(i===arr.length-1) b.textContent = data.answer; });
+  } catch {
+    document.querySelectorAll('#chat-messages .chat-bubble-bot').forEach((b,i,arr) => { if(i===arr.length-1) b.textContent = 'Could not reach the API.'; });
+  }
+}
+
+function sendSuggestion(btn) {
+  document.getElementById('chat-input').value = btn.textContent;
+  sendChat();
+}
+
+// ── Customer Lookup ────────────────────────────────────────────────────────
+const tierColors = { Platinum:['#b388ff','#1a0a2e'], Gold:['#ffb347','#2a1a00'], Silver:['#8fa2be','#0c1828'], Bronze:['#ff6b6b','#2a0a0a'] };
+
+async function lookupCustomer() {
+  const val = document.getElementById('cid-input').value.trim();
+  if (!val) return;
+  const el = document.getElementById('customer-result');
+  el.innerHTML = '<div class="spinner" style="margin:16px auto;width:24px;height:24px;"></div>';
+  try {
+    const r = await fetch(API + `/api/customers/${encodeURIComponent(val)}`);
+    if (r.status === 404) { el.innerHTML = `<p style="color:#ba1a1a;font-size:0.85rem;">Customer ${val} not found.</p>`; return; }
+    const d = await r.json();
+    const [tc, tbg] = tierColors[d.ltv_tier] || ['#006a68','#eef5f4'];
+    el.innerHTML = `
+      <div style="border-top:1px solid #eef5f4;padding-top:14px;">
+        <div style="font-family:'Manrope',sans-serif;font-size:1rem;font-weight:700;margin-bottom:2px;">${d.name||'—'}</div>
+        <div style="font-size:0.78rem;color:#3b4949;margin-bottom:12px;">${d.country||''} · Age ${d.age||'—'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.78rem;margin-bottom:12px;">
+          <div><span style="color:#3b4949;">Sessions</span><br><b>${d.session_count||0}</b></div>
+          <div><span style="color:#3b4949;">Orders</span><br><b>${d.order_count||0}</b></div>
+          <div><span style="color:#3b4949;">Revenue</span><br><b>${fmtCur(d.revenue||0)}</b></div>
+          <div><span style="color:#3b4949;">AOV</span><br><b>${fmtCur(d.avg_order_value||0)}</b></div>
+          <div><span style="color:#3b4949;">RFM</span><br><b>${d.rfm_segment||'—'}</b></div>
+          <div><span style="color:#3b4949;">Lifecycle</span><br><b>${d.lifecycle_stage||'—'}</b></div>
+        </div>
+        <div style="margin-bottom:10px;"><span class="tier-badge" style="background:${tbg};color:${tc};border:1px solid ${tc};">LTV: ${d.ltv_tier||'—'} (${d.ltv_score||0}/100)</span></div>
+        <div class="crm-box" style="font-size:0.78rem;">${d.crm_recommendation||'—'}</div>
+      </div>`;
+  } catch {
+    el.innerHTML = `<p style="color:#ba1a1a;font-size:0.85rem;">API error. Is the server running?</p>`;
+  }
+}
+
+// ── Start ──────────────────────────────────────────────────────────────────
+boot();
+</script>
+</body>
+</html>

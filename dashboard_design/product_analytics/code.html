@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InsightFlow | Product Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "secondary-container": "#b5edea", "tertiary-container": "#ffb347", background: "#f3fbfa", "surface-tint": "#006a68", "outline-variant": "#bacac8", "primary-fixed": "#50f9f6", "on-secondary-container": "#376d6b", "surface-variant": "#dce4e3", tertiary: "#845400", secondary: "#306765", "on-background": "#161d1d", "on-tertiary-fixed-variant": "#643f00", "primary-fixed-dim": "#1adcd9", "inverse-surface": "#2a3231", "surface-container-lowest": "#ffffff", "on-surface-variant": "#3b4949", error: "#ba1a1a", "on-secondary-fixed": "#00201f", "tertiary-fixed-dim": "#ffb95a", "on-error": "#ffffff", primary: "#006a68", "inverse-primary": "#1adcd9", "surface-container-low": "#eef5f4", "on-primary-fixed": "#00201f", "surface-container-highest": "#dce4e3", surface: "#f3fbfa", "on-secondary": "#ffffff", "primary-container": "#05d8d5", "surface-container-high": "#e2eae9", "on-tertiary-fixed": "#2a1800", "error-container": "#ffdad6", "tertiary-fixed": "#ffddb6", outline: "#6b7a79", "inverse-on-surface": "#ebf2f1", "secondary-fixed": "#b5edea", "on-surface": "#161d1d", "on-tertiary": "#ffffff", "on-primary-container": "#005958", "surface-container": "#e8efee", "on-error-container": "#93000a", "surface-dim": "#d4dcda", "surface-bright": "#f3fbfa", "on-secondary-fixed-variant": "#144f4e", "on-tertiary-container": "#704700", "on-primary-fixed-variant": "#00504e", "secondary-fixed-dim": "#9ad1ce"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Inter"], label: ["Inter"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; color: #0b1c30; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .headline-font { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] px-8 py-4 w-full flex justify-between items-center mx-auto">
+<div class="flex items-center gap-12">
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 headline-font">InsightFlow</h1>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-medium" href="#">Overview</a>
+<a class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-2 transition-colors font-medium" href="#">Products</a>
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-medium" href="#">Customers</a>
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-medium" href="#">Retention</a>
+<a class="text-slate-500 dark:text-slate-400 pb-2 hover:text-blue-500 dark:hover:text-blue-300 transition-colors font-medium" href="#">Chatbot</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container transition-all rounded-full"><span class="material-symbols-outlined">calendar_today</span></button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container transition-all rounded-full"><span class="material-symbols-outlined">public</span></button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container transition-all rounded-full"><span class="material-symbols-outlined">category</span></button>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container text-xs font-bold ml-2 overflow-hidden shadow-md">
+<img alt="User Profile" data-alt="professional male executive headshot with neutral background and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdBolF_2rBoM02NY-OkM0ImoxQkQO8QCOveAQMov8yEhWJu3pqwf_uJGsQl4xl70h6iXgHmWDOP44whRGhB3X824rKqFjXeXhokSjt3xYeUtPTuZGQZSTaqU9t7TRsF_YBYap6sgZfCe_rRbm0qYQRyLSVYBq0xwEUAF0fyVDrV0giaOKVdUw9GS7ghEiaxA4olYUpbFplUb-5TyKSZfXurs6MvQyYjumWSDv5P8m7r9CtOLyooyqVJZzWhM-sjOhU7arzOLxalvA"/>
+</div>
+</div>
+</header>
+<main class="max-w-[1600px] mx-auto px-8 py-8 space-y-8">
+<!-- Header Info -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<p class="text-primary font-semibold tracking-wider text-xs uppercase mb-1">Analytics Dashboard</p>
+<h2 class="text-3xl font-bold headline-font text-on-surface">Product Performance</h2>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span>Last 30 Days</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-xl font-semibold text-sm shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
+                    Export Report
+                </button>
+</div>
+</div>
+<!-- Bento Grid Charts -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Top 10 Products by Sales -->
+<section class="md:col-span-8 bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)]">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-lg font-semibold headline-font">Top 10 Products by Sales</h3>
+<span class="material-symbols-outlined text-on-surface-variant">more_horiz</span>
+</div>
+<div class="flex items-end gap-3 h-[300px] px-4">
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 100%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$124k</div>
+</div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 92%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 85%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 78%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 70%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 62%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 55%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 48%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 40%"></div>
+<div class="flex-1 bg-surface-container-low hover:bg-primary-container transition-all group relative rounded-t-lg" style="height: 35%"></div>
+</div>
+<div class="grid grid-cols-10 gap-3 mt-4 text-[10px] font-bold text-on-surface-variant text-center uppercase tracking-tighter">
+<span>Alpha</span><span>Beta</span><span>Gamma</span><span>Delta</span><span>Epsilon</span><span>Zeta</span><span>Eta</span><span>Theta</span><span>Iota</span><span>Kappa</span>
+</div>
+</section>
+<!-- Sentiment Analysis -->
+<section class="md:col-span-4 bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<h3 class="text-lg font-semibold headline-font mb-6">Sentiment Analysis</h3>
+<div class="space-y-8">
+<div class="flex items-center justify-between text-sm">
+<span class="font-medium">Overall Score</span>
+<span class="text-secondary font-bold text-xl">8.4</span>
+</div>
+<div class="h-12 w-full flex rounded-full overflow-hidden">
+<div class="bg-secondary h-full flex items-center justify-center text-[10px] font-bold text-white" style="width: 65%">65%</div>
+<div class="bg-surface-container-high h-full flex items-center justify-center text-[10px] font-bold text-on-surface-variant" style="width: 25%">25%</div>
+<div class="bg-error-container h-full flex items-center justify-center text-[10px] font-bold text-on-error-container" style="width: 10%">10%</div>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="text-center">
+<p class="text-[10px] text-on-surface-variant font-medium uppercase mb-1">Positive</p>
+<div class="w-2 h-2 rounded-full bg-secondary mx-auto"></div>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-on-surface-variant font-medium uppercase mb-1">Neutral</p>
+<div class="w-2 h-2 rounded-full bg-surface-container-high mx-auto"></div>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-on-surface-variant font-medium uppercase mb-1">Negative</p>
+<div class="w-2 h-2 rounded-full bg-error-container mx-auto"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Top 10 Products by Rating -->
+<section class="md:col-span-5 bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)]">
+<h3 class="text-lg font-semibold headline-font mb-6">Top Rated Products</h3>
+<div class="space-y-4">
+<!-- Rating Bar Item -->
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-medium">
+<span>Flux Wireless Earbuds</span>
+<span>4.9</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary-container rounded-full" style="width: 98%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-medium">
+<span>Quantum Laptop Stand</span>
+<span>4.8</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary-container rounded-full" style="width: 96%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-medium">
+<span>Nebula RGB Mouse</span>
+<span>4.7</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary-container rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-medium">
+<span>Solaris Smart Watch</span>
+<span>4.7</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary-container rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-medium">
+<span>Apex Mech Keyboard</span>
+<span>4.6</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary-container rounded-full" style="width: 92%"></div>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 text-xs font-semibold text-primary hover:bg-primary/5 rounded-lg transition-colors">View All Ratings</button>
+</section>
+<!-- Bubble Chart: Rating vs Revenue -->
+<section class="md:col-span-7 bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative">
+<h3 class="text-lg font-semibold headline-font mb-4">Rating vs Revenue by Category</h3>
+<div class="relative h-[280px] w-full border-l border-b border-outline-variant/30 mt-8">
+<!-- Fake Bubble Visualization -->
+<div class="absolute bottom-[20%] left-[10%] w-16 h-16 bg-primary/20 rounded-full border border-primary flex items-center justify-center backdrop-blur-sm">
+<span class="text-[10px] font-bold text-primary">Audio</span>
+</div>
+<div class="absolute bottom-[60%] left-[40%] w-24 h-24 bg-secondary-container/20 rounded-full border border-secondary flex items-center justify-center backdrop-blur-sm">
+<span class="text-[10px] font-bold text-on-secondary-container">Laptops</span>
+</div>
+<div class="absolute bottom-[40%] left-[70%] w-12 h-12 bg-tertiary-fixed-dim/40 rounded-full border border-tertiary flex items-center justify-center backdrop-blur-sm">
+<span class="text-[10px] font-bold text-on-tertiary-fixed-variant">Wearables</span>
+</div>
+<div class="absolute bottom-[80%] left-[25%] w-10 h-10 bg-primary-fixed/40 rounded-full border border-primary flex items-center justify-center backdrop-blur-sm">
+<span class="text-[10px] font-bold text-primary">Office</span>
+</div>
+<div class="absolute bottom-[10%] left-[85%] w-20 h-20 bg-surface-variant/40 rounded-full border border-outline flex items-center justify-center backdrop-blur-sm">
+<span class="text-[10px] font-bold text-on-surface-variant">Gaming</span>
+</div>
+<!-- X-Y Axis Labels -->
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Avg Customer Rating →</div>
+<div class="absolute -left-12 top-1/2 -rotate-90 -translate-y-1/2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Monthly Revenue ↑</div>
+</div>
+</section>
+</div>
+<!-- Word Cloud Section -->
+<section class="bg-surface-container-low rounded-[24px] p-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+<div>
+<h3 class="text-xl font-bold headline-font">Customer Feedback Keywords</h3>
+<p class="text-sm text-on-surface-variant">Semantic analysis of latest product reviews</p>
+</div>
+<div class="relative min-w-[200px]">
+<select class="w-full appearance-none bg-surface-container-lowest border-none rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/20 shadow-sm pr-10">
+<option>All Categories</option>
+<option>Hardware</option>
+<option>Software UX</option>
+<option>Customer Service</option>
+<option>Pricing</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="flex flex-wrap justify-center items-center gap-6 p-8 min-h-[300px]">
+<span class="text-5xl font-extrabold text-primary headline-font drop-shadow-sm hover:scale-105 transition-transform cursor-pointer">Intuitive</span>
+<span class="text-2xl font-semibold text-on-surface-variant">Performance</span>
+<span class="text-4xl font-bold text-primary-container">Reliable</span>
+<span class="text-xl font-medium text-slate-400">Complex</span>
+<span class="text-3xl font-bold text-secondary">Eco-friendly</span>
+<span class="text-5xl font-black text-on-surface tracking-tighter">Fast</span>
+<span class="text-2xl font-semibold text-primary">Innovative</span>
+<span class="text-xl font-medium text-slate-400">Interface</span>
+<span class="text-4xl font-bold text-primary/80">Premium</span>
+<span class="text-3xl font-bold text-on-surface-variant">Expensive</span>
+<span class="text-xl font-medium text-secondary/60">Durable</span>
+<span class="text-4xl font-extrabold text-primary-container/70">Support</span>
+<span class="text-2xl font-bold text-slate-500">Integration</span>
+<span class="text-5xl font-bold text-primary tracking-tight">Sleek</span>
+<span class="text-2xl font-medium text-on-surface-variant">Responsive</span>
+</div>
+</section>
+<!-- Product Table / Detailed List (Editorial Style) -->
+<section class="bg-surface-container-lowest rounded-[24px] overflow-hidden shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)]">
+<div class="px-8 py-6 border-b border-surface-container flex items-center justify-between">
+<h3 class="text-lg font-semibold headline-font">Detailed Inventory Insights</h3>
+<div class="flex gap-2">
+<button class="p-2 bg-surface-container-low rounded-lg"><span class="material-symbols-outlined text-on-surface-variant">search</span></button>
+<button class="p-2 bg-surface-container-low rounded-lg"><span class="material-symbols-outlined text-on-surface-variant">download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Product Entity</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Stock Status</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-right">Revenue</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-right">Conversion</th>
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Trend</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container/30">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Product" data-alt="professional studio shot of high-end wireless over-ear headphones on a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRgYTx6UKFXdSKzDXOGJ_3FDdnWhhgCcVNyVTUyOjbPHhghPZ69OYyLOjD8Q4K74LB5F59ZVKxWWPbQE-fvC6n4dY2OMuRBHC9LVSN2fCPXgFURWcU_1tighJGqJUNqFeI4r1lcr04ktH1MAb_opPxTJ2ytMHLylGCMvP7nG42pSFWq60aZDx6gMOW8gRI3t99xUJ_kqvL8okXod3TXRWnHuiR4GxzTYjqnaNtRK1R0QQHDK0TbUVIX0yFrFlA_IfnZXFgkjqlYHo"/>
+</div>
+<div>
+<p class="font-semibold text-sm">Zenith Pro Headset</p>
+<p class="text-[11px] text-on-surface-variant">ID: ZPH-9021</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[10px] font-bold">IN STOCK</span>
+</td>
+<td class="px-8 py-5 text-right font-semibold text-sm">$48,209</td>
+<td class="px-8 py-5 text-right text-sm">3.4%</td>
+<td class="px-8 py-5">
+<div class="w-16 h-8 overflow-hidden">
+<svg class="w-full h-full stroke-secondary fill-none stroke-2" viewbox="0 0 100 40">
+<path d="M0,30 Q25,5 50,25 T100,10"></path>
+</svg>
+</div>
+</td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/30 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Product" data-alt="minimalist white designer wristwatch with leather strap on a light grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASWXGtqtNX7d-HBbsRE1fBFDp5RLi52NU-91ByY65unq3A9AnNS4UwdF5rLM8-s67uIGHo7npka8WeZ468pghIOMjFN66uHbjHIUsVdRAeXPWRMTCs-x3gpBMvazXauKTlil9YJFdOsvSn0YQ2c-o_a6WZtUxPXCSl2ixrobxT1TJJFbRb5EYf25mxdVwEcHOz_wK69dpPM9mLTzdASFfK9Ngoi0yXNpli86tMrs1hkKE6bR5DPAmvkr8RZdExhtMNYgdgUMVatBg"/>
+</div>
+<div>
+<p class="font-semibold text-sm">Minimal Chrono</p>
+<p class="text-[11px] text-on-surface-variant">ID: MNC-4421</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-[10px] font-bold">LOW STOCK</span>
+</td>
+<td class="px-8 py-5 text-right font-semibold text-sm">$32,150</td>
+<td class="px-8 py-5 text-right text-sm">2.1%</td>
+<td class="px-8 py-5">
+<div class="w-16 h-8 overflow-hidden">
+<svg class="w-full h-full stroke-tertiary fill-none stroke-2" viewbox="0 0 100 40">
+<path d="M0,10 Q25,35 50,15 T100,30"></path>
+</svg>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Product" data-alt="sleek modern mechanical keyboard with subtle backlight on a dark executive desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRMAJ6KnAk_jGKj-2iUgjrbJ8-YQupl0VENQKQIPIULXdfHX4df1dRBXWd_43-9KFP6vehK0L7Hb9o6W8G9ySQ_y6_VjVjS49P7fz6Fr5V5j_v99kvsLE6qXCgEjb4R5W3OtZABEyb5CW3IXv_-M7W0Pv8lqOkz4UKNPEBDyzdmSrmQlCHqAFGhMOXM7aA9gW3JkjeiBh5rrpOyPXXAf32Tdh66h800Ux8jbOYv20gJWYtBbVlHWM7IWkAZZ57VWC0OpnQJ4ZvM_o"/>
+</div>
+<div>
+<p class="font-semibold text-sm">KeyMaster MX</p>
+<p class="text-[11px] text-on-surface-variant">ID: KMX-0012</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[10px] font-bold">IN STOCK</span>
+</td>
+<td class="px-8 py-5 text-right font-semibold text-sm">$27,400</td>
+<td class="px-8 py-5 text-right text-sm">5.8%</td>
+<td class="px-8 py-5">
+<div class="w-16 h-8 overflow-hidden">
+<svg class="w-full h-full stroke-secondary fill-none stroke-2" viewbox="0 0 100 40">
+<path d="M0,35 L20,30 L40,32 L60,15 L80,10 L100,5"></path>
+</svg>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-8 py-4 bg-surface-container-low/30 flex justify-between items-center">
+<p class="text-xs text-on-surface-variant">Showing 1-10 of 42 products</p>
+<div class="flex gap-1">
+<button class="px-3 py-1 rounded-lg bg-surface-container-lowest text-xs font-bold border border-outline-variant/30">1</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-lowest text-xs font-bold transition-colors">2</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-lowest text-xs font-bold transition-colors">3</button>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB Integration -->
+<button class="fixed bottom-8 right-8 bg-primary-container text-on-primary-container h-14 w-14 rounded-2xl flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">insights</span>
+</button>
+</body></html>

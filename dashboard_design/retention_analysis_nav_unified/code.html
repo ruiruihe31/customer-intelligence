@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary": "#ffffff", "secondary-container": "#b5edea", "tertiary-container": "#ffb347", background: "#f3fbfa", "surface-tint": "#006a68", "outline-variant": "#bacac8", "primary-fixed": "#50f9f6", "on-secondary-container": "#376d6b", "surface-variant": "#dce4e3", tertiary: "#845400", secondary: "#306765", "on-background": "#161d1d", "on-tertiary-fixed-variant": "#643f00", "primary-fixed-dim": "#1adcd9", "inverse-surface": "#2a3231", "surface-container-lowest": "#ffffff", "on-surface-variant": "#3b4949", error: "#ba1a1a", "on-secondary-fixed": "#00201f", "tertiary-fixed-dim": "#ffb95a", "on-error": "#ffffff", primary: "#006a68", "inverse-primary": "#1adcd9", "surface-container-low": "#eef5f4", "on-primary-fixed": "#00201f", "surface-container-highest": "#dce4e3", surface: "#f3fbfa", "on-secondary": "#ffffff", "primary-container": "#05d8d5", "surface-container-high": "#e2eae9", "on-tertiary-fixed": "#2a1800", "error-container": "#ffdad6", "tertiary-fixed": "#ffddb6", outline: "#6b7a79", "inverse-on-surface": "#ebf2f1", "secondary-fixed": "#b5edea", "on-surface": "#161d1d", "on-tertiary": "#ffffff", "on-primary-container": "#005958", "surface-container": "#e8efee", "on-error-container": "#93000a", "surface-dim": "#d4dcda", "surface-bright": "#f3fbfa", "on-secondary-fixed-variant": "#144f4e", "on-tertiary-container": "#704700", "on-primary-fixed-variant": "#00504e", "secondary-fixed-dim": "#9ad1ce"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Inter"], label: ["Inter"], display: "Manrope"}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar updated from COMPONENTS_17 -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)]">
+<div class="flex items-center justify-between px-8 h-20 w-full max-w-[1920px] mx-auto">
+<div class="flex items-center gap-12 h-full">
+<span class="text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50 font-['Manrope'] cursor-pointer">InsightFlow</span>
+<div class="hidden md:flex gap-8 items-center h-full font-['Manrope'] text-sm font-medium tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Overview</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Products</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Customers</a>
+<a class="relative text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 py-1 flex items-center h-fit font-medium transition-colors" href="#">Retention</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Chatbot</a>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="material-symbols-outlined text-slate-500 p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all active:scale-95 duration-150 ease-in-out cursor-pointer">calendar_today</button>
+<button class="material-symbols-outlined text-slate-500 p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all active:scale-95 duration-150 ease-in-out cursor-pointer">public</button>
+<button class="material-symbols-outlined text-slate-500 p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-all active:scale-95 duration-150 ease-in-out cursor-pointer">apps</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-28 px-8 pb-12 max-w-7xl mx-auto space-y-8">
+<!-- Header & Selection Controls -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div class="space-y-1">
+<h1 class="text-3xl font-semibold tracking-tight text-on-background">Retention Analysis</h1>
+<p class="text-on-surface-variant text-sm">Analyze cohort behavior and user stickiness across time intervals.</p>
+</div>
+<!-- Prominent Toggle Component -->
+<div class="bg-surface-container-low p-1.5 rounded-xl flex items-center shadow-inner">
+<button class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all bg-surface-container-lowest text-primary shadow-sm">
+                Sessions-based
+            </button>
+<button class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-on-surface-variant hover:text-on-surface">
+                Orders-based
+            </button>
+</div>
+</header>
+<!-- KPI Bento Grid Section -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Summary Card 1: Average Lifespan -->
+<div class="md:col-span-1 bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary rounded-full"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold tracking-wider text-on-surface-variant uppercase">Avg. Customer Lifespan</span>
+<span class="material-symbols-outlined text-primary text-xl">avg_time</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">14.2 Mo</span>
+<span class="text-secondary text-xs font-medium flex items-center">+1.2 <span class="material-symbols-outlined text-sm">trending_up</span></span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[72%]"></div>
+</div>
+</div>
+<!-- Summary Card 2: Churn Rate -->
+<div class="md:col-span-1 bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error rounded-full"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold tracking-wider text-on-surface-variant uppercase">Net Churn Rate</span>
+<span class="material-symbols-outlined text-error text-xl">group_remove</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">2.4%</span>
+<span class="text-error text-xs font-medium flex items-center">-0.4% <span class="material-symbols-outlined text-sm">trending_down</span></span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error w-[18%]"></div>
+</div>
+</div>
+<!-- Summary Card 3: Stickiness -->
+<div class="md:col-span-1 bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary rounded-full"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold tracking-wider text-on-surface-variant uppercase">DAU/MAU Ratio</span>
+<span class="material-symbols-outlined text-secondary text-xl">bolt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">48%</span>
+<span class="text-secondary text-xs font-medium flex items-center">+5% <span class="material-symbols-outlined text-sm">trending_up</span></span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[48%]"></div>
+</div>
+</div>
+<!-- Summary Card 4: Retention Index -->
+<div class="md:col-span-1 bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)] relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary rounded-full"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold tracking-wider text-on-surface-variant uppercase">Retention Score</span>
+<span class="material-symbols-outlined text-tertiary text-xl">verified</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">A-</span>
+<span class="text-on-surface-variant text-xs font-medium">Top 10% Industry</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[88%]"></div>
+</div>
+</div>
+</div>
+<!-- Cohort Retention Heatmap Section -->
+<section class="bg-surface-container-lowest p-8 rounded-2xl shadow-[0_12px_32px_-4px_rgba(11,28,48,0.06)]">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<h2 class="text-xl font-bold">Cohort Retention Heatmap</h2>
+<p class="text-on-surface-variant text-sm">Monthly cohort performance for the past year</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
+<span>Low</span>
+<div class="flex h-3 w-20 rounded-full bg-gradient-to-r from-surface-container-low to-primary-container"></div>
+<span>High</span>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface text-sm rounded-lg hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-lg">download</span>
+                    Export CSV
+                </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-separate border-spacing-1">
+<thead>
+<tr class="text-left">
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant min-w-[140px]">Cohort</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant min-w-[80px]">Users</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M0</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M1</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M2</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M3</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M4</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M5</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M6</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M7</th>
+<th class="p-3 text-xs font-semibold uppercase tracking-widest text-on-surface-variant">M8</th>
+</tr>
+</thead>
+<tbody class="font-medium text-sm">
+<tr>
+<td class="p-3 bg-surface-container-low rounded-l-lg">Oct 2023</td>
+<td class="p-3 bg-surface-container-low">2,420</td>
+<td class="p-3 bg-primary-container text-white text-center rounded-sm">100%</td>
+<td class="p-3 bg-primary-container/80 text-white text-center rounded-sm">78%</td>
+<td class="p-3 bg-primary-container/70 text-white text-center rounded-sm">64%</td>
+<td class="p-3 bg-primary-container/60 text-white text-center rounded-sm">52%</td>
+<td class="p-3 bg-primary-container/50 text-white text-center rounded-sm">48%</td>
+<td class="p-3 bg-primary-container/40 text-on-primary-container text-center rounded-sm">41%</td>
+<td class="p-3 bg-primary-container/30 text-on-primary-container text-center rounded-sm">38%</td>
+<td class="p-3 bg-primary-container/20 text-on-primary-container text-center rounded-sm">35%</td>
+<td class="p-3 bg-primary-container/10 text-on-primary-container text-center rounded-sm">32%</td>
+</tr>
+<tr>
+<td class="p-3 bg-surface-container-low rounded-l-lg">Nov 2023</td>
+<td class="p-3 bg-surface-container-low">1,890</td>
+<td class="p-3 bg-primary-container text-white text-center rounded-sm">100%</td>
+<td class="p-3 bg-primary-container/90 text-white text-center rounded-sm">82%</td>
+<td class="p-3 bg-primary-container/70 text-white text-center rounded-sm">69%</td>
+<td class="p-3 bg-primary-container/50 text-white text-center rounded-sm">51%</td>
+<td class="p-3 bg-primary-container/40 text-on-primary-container text-center rounded-sm">44%</td>
+<td class="p-3 bg-primary-container/30 text-on-primary-container text-center rounded-sm">39%</td>
+<td class="p-3 bg-primary-container/20 text-on-primary-container text-center rounded-sm">32%</td>
+<td class="p-3 bg-primary-container/10 text-on-primary-container text-center rounded-sm">28%</td>
+<td class="p-3"></td>
+</tr>
+<tr>
+<td class="p-3 bg-surface-container-low rounded-l-lg">Dec 2023</td>
+<td class="p-3 bg-surface-container-low">3,120</td>
+<td class="p-3 bg-primary-container text-white text-center rounded-sm">100%</td>
+<td class="p-3 bg-primary-container/85 text-white text-center rounded-sm">81%</td>
+<td class="p-3 bg-primary-container/60 text-white text-center rounded-sm">58%</td>
+<td class="p-3 bg-primary-container/40 text-on-primary-container text-center rounded-sm">45%</td>
+<td class="p-3 bg-primary-container/30 text-on-primary-container text-center rounded-sm">38%</td>
+<td class="p-3 bg-primary-container/20 text-on-primary-container text-center rounded-sm">34%</td>
+<td class="p-3 bg-primary-container/15 text-on-primary-container text-center rounded-sm">29%</td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+</tr>
+<tr>
+<td class="p-3 bg-surface-container-low rounded-l-lg">Jan 2024</td>
+<td class="p-3 bg-surface-container-low">2,150</td>
+<td class="p-3 bg-primary-container text-white text-center rounded-sm">100%</td>
+<td class="p-3 bg-primary-container/75 text-white text-center rounded-sm">74%</td>
+<td class="p-3 bg-primary-container/50 text-white text-center rounded-sm">51%</td>
+<td class="p-3 bg-primary-container/40 text-on-primary-container text-center rounded-sm">42%</td>
+<td class="p-3 bg-primary-container/30 text-on-primary-container text-center rounded-sm">37%</td>
+<td class="p-3 bg-primary-container/20 text-on-primary-container text-center rounded-sm">31%</td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+</tr>
+<tr>
+<td class="p-3 bg-surface-container-low rounded-l-lg">Feb 2024</td>
+<td class="p-3 bg-surface-container-low">2,880</td>
+<td class="p-3 bg-primary-container text-white text-center rounded-sm">100%</td>
+<td class="p-3 bg-primary-container/90 text-white text-center rounded-sm">88%</td>
+<td class="p-3 bg-primary-container/70 text-white text-center rounded-sm">66%</td>
+<td class="p-3 bg-primary-container/55 text-white text-center rounded-sm">54%</td>
+<td class="p-3 bg-primary-container/40 text-on-primary-container text-center rounded-sm">46%</td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+</tr>
+<tr>
+<td class="p-3 bg-surface-container-low rounded-l-lg">Mar 2024</td>
+<td class="p-3 bg-surface-container-low">3,450</td>
+<td class="p-3 bg-primary-container text-white text-center rounded-sm">100%</td>
+<td class="p-3 bg-primary-container/80 text-white text-center rounded-sm">79%</td>
+<td class="p-3 bg-primary-container/65 text-white text-center rounded-sm">62%</td>
+<td class="p-3 bg-primary-container/45 text-on-primary-container text-center rounded-sm">44%</td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+<td class="p-3"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Insights & Behavioral Analysis -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Behavioral Insights Card -->
+<div class="md:col-span-2 bg-surface-container-low rounded-2xl p-8">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-3 bg-primary-container/10 rounded-xl">
+<span class="material-symbols-outlined text-primary-container">lightbulb</span>
+</div>
+<div>
+<h3 class="text-lg font-bold">Key Behavioral Drivers</h3>
+<p class="text-sm text-on-surface-variant">Factors influencing your current retention trends.</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-start gap-4 p-4 bg-surface-container-lowest rounded-xl">
+<div class="h-10 w-10 shrink-0 rounded-full bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">trending_up</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Onboarding Completion</p>
+<p class="text-xs text-on-surface-variant">Users who finish the "Advanced Analytics" tutorial have a <span class="text-secondary font-bold">3.2x higher</span> retention after 3 months.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 bg-surface-container-lowest rounded-xl">
+<div class="h-10 w-10 shrink-0 rounded-full bg-tertiary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant">warning</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Notification Fatigue</p>
+<p class="text-xs text-on-surface-variant">High frequency of email alerts in week 2 correlates with a <span class="text-error font-bold">14% churn spike</span>.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Context Side Card -->
+<div class="md:col-span-1 bg-surface-container-highest rounded-2xl overflow-hidden shadow-xl group">
+<div class="h-48 overflow-hidden relative">
+<img alt="Dashboard visualization" class="w-full h-full object-cover grayscale brightness-75 group-hover:scale-110 transition-transform duration-700" data-alt="Modern high-tech data visualization interface with blue and purple glowing nodes and connection lines on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARetBgeVhRClCWuOtK21Bd1BMI90P7cz9okeD6eyHZofT51zbVtMOtONKP6OGGokUQ2JBBFI5YA1IVQ3ySr3YPBOcoLTPIcW57yYnBbXAn-5RlPm3H0Y6sBe_ps-3iuVjeFVjVY31z7biv8YDYy95HJMa9sKkmqtwJqGV4Euo_4pNe0BB6n97QCPmTudk3xX3ArygtoMk0X99oUKgpSeKezsA7_varnbpbl74kQkenAoY_VLMMj2-5dxXInDmX6aGaDtJchpIW7cU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-highest via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-6">
+<span class="px-2 py-1 bg-primary text-[10px] text-white font-bold rounded uppercase tracking-widest">Live Forecast</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-bold text-lg mb-2">Predictive Retention</h3>
+<p class="text-sm text-on-surface-variant mb-6">Based on current signals, we project a <span class="text-primary font-bold">4.2% increase</span> in year-end retention for the Q3 cohort.</p>
+<button class="w-full py-3 bg-primary-container text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+                    View Detailed Forecast
+                </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Hidden on Mobile) -->
+<button class="fixed bottom-8 right-8 h-16 w-16 bg-primary-container text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all group">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+<span class="absolute right-full mr-4 px-3 py-1.5 bg-on-background text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Generate AI Summary</span>
+</button>
+</body></html>

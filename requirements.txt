@@ -1,0 +1,32 @@
+# Core data processing
+numpy>=1.26
+pandas>=2.2
+
+# Machine learning
+scikit-learn>=1.4
+
+# Visualisation
+plotly>=5.20
+matplotlib>=3.8
+wordcloud>=1.9
+
+# NLP
+vaderSentiment>=3.3
+textblob>=0.18
+
+# Name inference
+faker>=24.0
+
+# Backend API
+fastapi>=0.111
+uvicorn[standard]>=0.29
+pydantic>=2.6
+
+# Frontend (Streamlit — keep for local dev)
+streamlit>=1.40
+
+# AI Chatbot (Phase 2)
+anthropic>=0.25
+
+# Utilities
+python-dotenv>=1.0
