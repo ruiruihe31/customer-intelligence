@@ -5,9 +5,11 @@ Run from the Customer/ project root:
 """
 from __future__ import annotations
 
+import base64
 import math
 import sys
 from contextlib import asynccontextmanager
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +20,7 @@ import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from PIL import Image
 from pydantic import BaseModel
 
 from core.analytics import (
@@ -33,6 +36,7 @@ from core.analytics import (
     retention_matrix,
     sentiment_product_metrics,
 )
+from core.charts import generate_wordcloud_images
 from core.chatbot import answer_question, lookup_customer
 from core.data_loader import load_data
 
@@ -89,6 +93,18 @@ async def lifespan(app: FastAPI):
     retention_session = retention_matrix(data, activity_source="sessions")
     retention_purchase = retention_matrix(data, activity_source="orders")
 
+    # Pre-compute word cloud base64 PNGs for the frontend
+    wc_arrays = generate_wordcloud_images(data["reviews"], data["products"])
+    wc_b64: dict[str, str] = {}
+    for cat, arr in wc_arrays.items():
+        try:
+            img = Image.fromarray(arr)
+            buf = BytesIO()
+            img.save(buf, format="PNG")
+            wc_b64[cat] = base64.b64encode(buf.getvalue()).decode()
+        except Exception:
+            continue
+
     _cache.update(
         data=data,
         profile=profile,
@@ -110,6 +126,7 @@ async def lifespan(app: FastAPI):
         reviews_with_sentiment=reviews_with_sentiment,
         retention_session=retention_session,
         retention_purchase=retention_purchase,
+        wordcloud_b64=wc_b64,
     )
     yield
 
@@ -245,6 +262,14 @@ def api_customer(customer_id: int):
     if info is None:
         raise HTTPException(status_code=404, detail="Customer not found")
     return _clean_customer(info)
+
+
+# ---------------------------------------------------------------------------
+# Products — Word clouds (base64 PNG per category)
+# ---------------------------------------------------------------------------
+@app.get("/api/products/wordcloud")
+def api_wordcloud():
+    return _cache.get("wordcloud_b64", {})
 
 
 # ---------------------------------------------------------------------------
