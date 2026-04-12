@@ -41,7 +41,7 @@ tailwind.config = {
 </script>
 <style>
 * { box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: #f8f9ff; color: #161d1d; margin: 0; }
+body { font-family: 'Inter', sans-serif; background: #f8f9ff; color: #161d1d; margin: 0; overflow-x: hidden; max-width: 100vw; }
 h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 
 /* Nav */
@@ -201,7 +201,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <p class="section-sub">Sales rankings, sentiment analysis, and category insights.</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top 10 Products by Sales</div>
         <div id="chart-sales-rank"></div>
@@ -212,7 +212,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Sentiment Analysis</div>
         <div class="section-sub" style="margin-bottom:16px;">Positive / Neutral / Negative by category (VADER)</div>
@@ -256,7 +256,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Cluster + RFM -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Customer Clustering</div>
         <div class="section-sub" style="margin-bottom:16px;">PCA 2D projection of behavioral features</div>
@@ -270,7 +270,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Lifecycle + Funnel -->
-    <div style="display:grid;grid-template-columns:1fr 2fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Lifecycle Stages</div>
         <div class="section-sub" style="margin-bottom:16px;">Customer distribution by lifecycle</div>
@@ -291,7 +291,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Demographics -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Demographics Breakdown</div>
         <div class="section-sub" style="margin-bottom:16px;">Region × Gender × Age Sunburst</div>
@@ -322,7 +322,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <div class="kpi-card"><div class="kpi-ribbon" style="background:#845400;"></div><div class="kpi-label">Cohorts Tracked</div><div class="kpi-value" id="ret-cohorts">—</div><div class="kpi-detail">Signup months</div></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Session Retention Cohort</div>
         <div class="section-sub" style="margin-bottom:16px;">Monthly cohort performance — session-based</div>
@@ -425,10 +425,8 @@ document.querySelectorAll('.nav-link').forEach(link => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     link.classList.add('active');
     document.getElementById('tab-' + tab).classList.add('active');
-    // Resize Plotly charts after tab becomes visible (charts rendered while hidden get wrong dimensions)
-    setTimeout(() => {
-      document.querySelectorAll('#tab-' + tab + ' .js-plotly-plot').forEach(el => Plotly.Plots.resize(el));
-    }, 50);
+    // Trigger window resize so Plotly's responsive mode redraws charts at the correct container width
+    window.dispatchEvent(new Event('resize'));
   });
 });
 
