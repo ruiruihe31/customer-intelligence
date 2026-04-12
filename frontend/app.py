@@ -76,11 +76,6 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Prevent any Plotly figure from causing horizontal page overflow */
-    .main .block-container {
-        overflow-x: hidden;
-        max-width: 100%;
-    }
     .kpi-card {
         background: rgba(8, 21, 34, 0.82);
         border: 1px solid rgba(148, 163, 184, 0.16);
@@ -173,9 +168,9 @@ def _compute_all(_data: dict[str, pd.DataFrame]) -> dict:
 
 @st.cache_data(show_spinner="Generating word clouds...")
 def _generate_wordclouds(
-    reviews: pd.DataFrame, products: pd.DataFrame
-) -> dict[str, np.ndarray]:
-    return generate_wordcloud_images(reviews, products)
+    _reviews: pd.DataFrame, _products: pd.DataFrame
+) -> dict[str, object]:
+    return generate_wordcloud_images(_reviews, _products)
 
 
 # ---------------------------------------------------------------------------
@@ -229,9 +224,11 @@ with tab_overview:
 
 # ── Tab 2: Products ─────────────────────────────────────────────────────────
 with tab_products:
-    # Bar charts are full-width: long Y-axis product names overflow in half-width columns
-    st.plotly_chart(make_product_sales_rank(result["product_master"]), use_container_width=True)
-    st.plotly_chart(make_product_rating_rank(result["product_master"]), use_container_width=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(make_product_sales_rank(result["product_master"]), use_container_width=True)
+    with col2:
+        st.plotly_chart(make_product_rating_rank(result["product_master"]), use_container_width=True)
 
     col3, col4 = st.columns(2)
     with col3:
@@ -243,10 +240,7 @@ with tab_products:
     st.plotly_chart(make_top_products_table(result["top_products"]), use_container_width=True)
 
     st.subheader("Review Keyword Clouds by Category")
-    wc_images = _generate_wordclouds(
-        result["reviews_with_sentiment"].reset_index(drop=True),
-        data["products"].reset_index(drop=True),
-    )
+    wc_images = _generate_wordclouds(result["reviews_with_sentiment"], data["products"])
     if wc_images:
         items = list(wc_images.items())
         n_cols = 3
@@ -296,11 +290,10 @@ with tab_customers:
         use_container_width=True,
     )
 
-    st.markdown("#### Demographics Breakdown")
-    dem_col1, dem_col2 = st.columns([1, 1])
-    with dem_col1:
+    col5, col6 = st.columns(2)
+    with col5:
         st.plotly_chart(make_sunburst_figure(result["sunburst_frame"]), use_container_width=True)
-    with dem_col2:
+    with col6:
         st.plotly_chart(make_age_pyramid(result["age_gender"]), use_container_width=True)
 
 # ── Tab 4: Retention ────────────────────────────────────────────────────────

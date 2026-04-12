@@ -126,13 +126,12 @@ def make_overview_figure(monthly: pd.DataFrame) -> go.Figure:
 def make_geo_figure(geo: pd.DataFrame) -> go.Figure:
     fig = px.choropleth(
         geo,
-        locations="iso_alpha3",
-        locationmode="ISO-3",
+        locations="country_name",
+        locationmode="country names",
         color="revenue",
         hover_name="country_name",
         custom_data=["sessions", "orders", "conversion", "region"],
-        # Light-to-dark scale — readable on both light and dark backgrounds
-        color_continuous_scale=["#cff0ec", "#56CCF2", "#00C2A8", "#006a68"],
+        color_continuous_scale=["#0B1F33", "#103B4C", "#00C2A8", "#FFB84D"],
     )
     fig.update_traces(
         hovertemplate=(
@@ -143,29 +142,16 @@ def make_geo_figure(geo: pd.DataFrame) -> go.Figure:
     )
     fig.update_layout(
         geo=dict(
-            bgcolor="rgba(255,255,255,0.04)",
+            bgcolor="rgba(0,0,0,0)",
             showframe=False,
-            showcoastlines=True,
-            coastlinecolor="rgba(148,163,184,0.3)",
-            showland=True,
-            landcolor="#e8eff4",
-            showocean=True,
-            oceancolor="#f0f6fa",
-            showlakes=False,
+            showcoastlines=False,
             projection_type="natural earth",
+            landcolor="#0C1C2D",
+            lakecolor="#0C1C2D",
         ),
-        coloraxis_colorbar=dict(
-            title="Revenue",
-            tickprefix="$",
-            thickness=14,
-            len=0.7,
-            x=1.01,
-        ),
+        coloraxis_colorbar=dict(title="Revenue"),
     )
-    fig = apply_theme(fig, "Global Revenue Heatmap", 520)
-    # Override margin AFTER apply_theme so the colorbar is not clipped
-    fig.update_layout(margin=dict(l=0, r=130, t=70, b=10))
-    return fig
+    return apply_theme(fig, "Geographic Revenue Heatmap", 500)
 
 
 # ---------------------------------------------------------------------------
@@ -393,11 +379,9 @@ def make_product_sales_rank(product_master: pd.DataFrame) -> go.Figure:
         color_discrete_sequence=COLOR_SEQUENCE,
     )
     fig.update_traces(texttemplate="%{text:,.0f}", textposition="outside")
-    fig.update_yaxes(autorange="reversed", title=None, tickfont=dict(size=11))
+    fig.update_yaxes(autorange="reversed", title=None)
     fig.update_xaxes(title="Units Sold")
-    fig = apply_theme(fig, "Top 10 Products by Sales Volume", 460)
-    fig.update_layout(margin=dict(l=210, r=80, t=70, b=45))
-    return fig
+    return apply_theme(fig, "Top 10 Products by Sales Volume", 460)
 
 
 def make_product_rating_rank(product_master: pd.DataFrame) -> go.Figure:
@@ -412,11 +396,9 @@ def make_product_rating_rank(product_master: pd.DataFrame) -> go.Figure:
         color_discrete_sequence=COLOR_SEQUENCE,
     )
     fig.update_traces(texttemplate="%{text:.2f}", textposition="outside")
-    fig.update_yaxes(autorange="reversed", title=None, tickfont=dict(size=11))
-    fig.update_xaxes(title="Avg Rating", range=[0, 5.5])
-    fig = apply_theme(fig, "Top 10 Rated Products (Min. 5 Reviews)", 460)
-    fig.update_layout(margin=dict(l=210, r=80, t=70, b=45))
-    return fig
+    fig.update_yaxes(autorange="reversed", title=None)
+    fig.update_xaxes(title="Average Rating", range=[0, 5.5])
+    return apply_theme(fig, "Top 10 Rated Products (Min. 5 Reviews)", 460)
 
 
 def make_sentiment_stacked_bar(sentiment_pct: pd.DataFrame) -> go.Figure:
@@ -496,29 +478,22 @@ def make_retention_heatmap(retention: pd.DataFrame, title: str) -> go.Figure:
 def generate_wordcloud_images(
     reviews: pd.DataFrame,
     products: pd.DataFrame,
-) -> dict[str, np.ndarray]:
-    """Return {category: numpy RGBA array} for each product category.
-
-    Numpy arrays are used instead of PIL Images so Streamlit's @st.cache_data
-    can serialize/deserialize them reliably across all supported versions.
-    """
+) -> dict[str, object]:
+    """Return {category: PIL.Image} for each product category."""
     merged = reviews.merge(products[["product_id", "category"]], on="product_id", how="left")
     categories = sorted(merged["category"].dropna().unique())
-    images: dict[str, np.ndarray] = {}
+    images: dict[str, object] = {}
     for cat in categories:
         texts = merged.loc[merged["category"] == cat, "review_text"].dropna()
         if texts.empty:
             continue
         combined = " ".join(texts.astype(str))
-        try:
-            wc = WordCloud(
-                width=700, height=340,
-                background_color=None, mode="RGBA",
-                colormap="cool", max_words=120,
-            ).generate(combined)
-            images[cat] = np.array(wc.to_image())
-        except Exception:
-            continue
+        wc = WordCloud(
+            width=700, height=340,
+            background_color=None, mode="RGBA",
+            colormap="cool", max_words=120,
+        ).generate(combined)
+        images[cat] = wc.to_image()
     return images
 
 
