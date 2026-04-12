@@ -406,14 +406,36 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 <script>
 const API = '';
 const COLORS = ['#006a68','#05d8d5','#ffb347','#306765','#845400','#b5edea','#a5c8c7'];
-const PLOTLY_LAYOUT = {
-  paper_bgcolor: 'rgba(0,0,0,0)',
-  plot_bgcolor: 'rgba(0,0,0,0)',
-  font: { family: 'Inter, sans-serif', color: '#161d1d', size: 12 },
-  margin: { t: 20, b: 40, l: 50, r: 20 },
-  showlegend: true,
-  legend: { orientation: 'h', y: -0.2, font: { size: 11 } },
-};
+// Full-width chart IDs (single-column cards)
+const FULL_WIDTH_CHARTS = new Set(['chart-revenue-trend','chart-category-trend','chart-segment-heatmap']);
+
+function getContainerWidth(id) {
+  const el = document.getElementById(id);
+  if (el && el.offsetWidth > 0) return el.offsetWidth;
+  // Estimate when tab is hidden: derive from viewport
+  const content = Math.min(window.innerWidth, 1400) - 64;
+  return FULL_WIDTH_CHARTS.has(id) ? content : Math.round((content - 24) / 2);
+}
+
+function plotlyLayout(id, extra) {
+  const w = getContainerWidth(id);
+  const t = Math.max(0, Math.min(1, (w - 380) / 520)); // 0 at 380px → 1 at 900px
+  const fs  = Math.round(9  + t * 3);   // axis font:    9–12
+  const lfs = Math.max(8, fs - 1);      // legend font:  8–11
+  const ml  = Math.round(38 + t * 12);  // left margin:  38–50
+  const mb  = Math.round(24 + t * 16);  // bottom margin:24–40
+  const mt  = Math.round(12 + t * 8);   // top margin:   12–20
+  const mr  = Math.round(12 + t * 8);   // right margin: 12–20
+  return Object.assign({
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor:  'rgba(0,0,0,0)',
+    font: { family: 'Inter, sans-serif', color: '#161d1d', size: fs },
+    margin: { t: mt, b: mb, l: ml, r: mr },
+    showlegend: true,
+    legend: { orientation: 'h', y: 0.99, x: 0.5, xanchor: 'center', yanchor: 'top',
+              font: { size: lfs }, bgcolor: 'rgba(255,255,255,0.75)' },
+  }, extra || {});
+}
 const PLOTLY_CONFIG = { displayModeBar: false, responsive: true };
 
 // ── Tab navigation ─────────────────────────────────────────────────────────
@@ -521,7 +543,7 @@ function renderRevenueTrend(monthly) {
       fill: 'tozeroy', fillcolor: 'rgba(0,106,104,0.07)' },
     { x: months, y: rolling, type: 'scatter', mode: 'lines', name: '3M Rolling Avg',
       line: { color: '#ffb347', width: 2, dash: 'dot' } },
-  ], { ...PLOTLY_LAYOUT, height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee', zeroline: false }, xaxis: { gridcolor: '#e8efee' } }, PLOTLY_CONFIG);
+  ], plotlyLayout('chart-revenue-trend', { height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee', zeroline: false }, xaxis: { gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
 }
 
 // ── Users & Sessions ───────────────────────────────────────────────────────
@@ -533,11 +555,11 @@ function renderUserSessions(monthly) {
     { x: months, y: monthly.map(r => r.sessions), type: 'scatter', mode: 'lines+markers', name: 'Sessions',
       line: { color: '#05d8d5', width: 2, dash: 'dash' }, marker: { size: 4 },
       yaxis: 'y2' },
-  ], { ...PLOTLY_LAYOUT, height: 280,
+  ], plotlyLayout('chart-users-sessions', { height: 280,
     yaxis: { gridcolor: '#e8efee', zeroline: false, title: 'Active Users' },
     yaxis2: { overlaying: 'y', side: 'right', title: 'Sessions', gridcolor: 'transparent', zeroline: false },
     xaxis: { gridcolor: '#e8efee' },
-  }, PLOTLY_CONFIG);
+  }), PLOTLY_CONFIG);
 }
 
 // ── Geo Map ────────────────────────────────────────────────────────────────
@@ -551,31 +573,35 @@ function renderGeo(geo) {
     colorscale: [[0,'#eef5f4'],[0.5,'#05d8d5'],[1,'#006a68']],
     showscale: true,
     colorbar: { len: 0.6, thickness: 12, tickprefix: '$', tickformat: ',.0f', title: { text: 'Revenue', side: 'right' } },
-  }], { ...PLOTLY_LAYOUT, height: 280, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 60 } }, PLOTLY_CONFIG);
+  }], plotlyLayout('chart-geo', { height: 280, showlegend: false, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 60 } }), PLOTLY_CONFIG);
 }
 
 // ── Sales Rank ─────────────────────────────────────────────────────────────
 function renderSalesRank(products) {
   const top = [...products].sort((a,b) => (b.total_qty||b.units||0)-(a.total_qty||a.units||0)).slice(0,10);
+  const lyt = plotlyLayout('chart-sales-rank');
+  const barL = Math.round(Math.max(90, Math.min(160, getContainerWidth('chart-sales-rank') * 0.26)));
   Plotly.newPlot('chart-sales-rank', [{
     type: 'bar', orientation: 'h',
     x: top.map(p => p.total_qty||p.units||0).reverse(),
     y: top.map(p => (p.name||'').substring(0,30)).reverse(),
     marker: { color: top.map((_,i) => COLORS[i%COLORS.length]).reverse() },
     hovertemplate: '%{y}: %{x} units<extra></extra>',
-  }], { ...PLOTLY_LAYOUT, height: 320, xaxis: { title: 'Units Sold', gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: 10 } }, margin: { ...PLOTLY_LAYOUT.margin, l: 160 } }, PLOTLY_CONFIG);
+  }], { ...lyt, height: 320, xaxis: { title: 'Units Sold', gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { ...lyt.margin, l: barL } }, PLOTLY_CONFIG);
 }
 
 // ── Rating Rank ────────────────────────────────────────────────────────────
 function renderRatingRank(products) {
   const top = [...products].filter(p => p.avg_rating > 0).sort((a,b) => b.avg_rating - a.avg_rating).slice(0,10);
+  const lyt = plotlyLayout('chart-rating-rank');
+  const barL = Math.round(Math.max(90, Math.min(160, getContainerWidth('chart-rating-rank') * 0.26)));
   Plotly.newPlot('chart-rating-rank', [{
     type: 'bar', orientation: 'h',
     x: top.map(p => p.avg_rating).reverse(),
     y: top.map(p => (p.name||'').substring(0,30)).reverse(),
     marker: { color: '#05d8d5' },
     hovertemplate: '%{y}: %{x:.2f} ★<extra></extra>',
-  }], { ...PLOTLY_LAYOUT, height: 320, xaxis: { title: 'Avg Rating', range: [0, 5.5], gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: 10 } }, margin: { ...PLOTLY_LAYOUT.margin, l: 160 } }, PLOTLY_CONFIG);
+  }], { ...lyt, height: 320, xaxis: { title: 'Avg Rating', range: [0, 5.5], gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { ...lyt.margin, l: barL } }, PLOTLY_CONFIG);
 }
 
 // ── Sentiment ──────────────────────────────────────────────────────────────
@@ -585,7 +611,7 @@ function renderSentiment(sentiment) {
     { type: 'bar', name: 'Positive', x: cats, y: sentiment.map(r => r.Positive||0), marker: { color: '#006a68' } },
     { type: 'bar', name: 'Neutral',  x: cats, y: sentiment.map(r => r.Neutral||0),  marker: { color: '#b5edea' } },
     { type: 'bar', name: 'Negative', x: cats, y: sentiment.map(r => r.Negative||0), marker: { color: '#ffb347' } },
-  ], { ...PLOTLY_LAYOUT, barmode: 'stack', height: 300, yaxis: { ticksuffix: '%', gridcolor: '#e8efee' }, xaxis: { tickfont: { size: 10 } } }, PLOTLY_CONFIG);
+  ], plotlyLayout('chart-sentiment', { barmode: 'stack', height: 300, yaxis: { ticksuffix: '%', gridcolor: '#e8efee' }, xaxis: { gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
 }
 
 // ── Category Bubble ────────────────────────────────────────────────────────
@@ -598,7 +624,7 @@ function renderCategoryBubble(perf) {
     textposition: 'top center',
     marker: { size: perf.map(r => Math.sqrt(r.units||1)*3), color: COLORS, opacity: 0.8, sizemode: 'diameter' },
     hovertemplate: '<b>%{text}</b><br>Rating: %{x:.2f}<br>Revenue: $%{y:,.0f}<extra></extra>',
-  }], { ...PLOTLY_LAYOUT, height: 300, xaxis: { title: 'Avg Rating', gridcolor: '#e8efee', range: [0, 5.5] }, yaxis: { title: 'Revenue (USD)', tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' }, showlegend: false }, PLOTLY_CONFIG);
+  }], plotlyLayout('chart-category-bubble', { height: 300, showlegend: false, xaxis: { title: 'Avg Rating', gridcolor: '#e8efee', range: [0, 5.5] }, yaxis: { title: 'Revenue (USD)', tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
 }
 
 // ── Category Trend ─────────────────────────────────────────────────────────
@@ -613,7 +639,7 @@ function renderCategoryTrend(monthly) {
     stackgroup: 'one',
     fillcolor: COLORS[i%COLORS.length],
   }));
-  Plotly.newPlot('chart-category-trend', traces, { ...PLOTLY_LAYOUT, height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' }, xaxis: { gridcolor: '#e8efee' } }, PLOTLY_CONFIG);
+  Plotly.newPlot('chart-category-trend', traces, plotlyLayout('chart-category-trend', { height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' }, xaxis: { gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
 }
 
 // ── Top Products Table ─────────────────────────────────────────────────────
@@ -660,7 +686,7 @@ function renderClusterScatter(scatter) {
       hovertemplate: `<b>${name}</b><extra></extra>`,
     };
   });
-  Plotly.newPlot('chart-cluster-scatter', traces, { ...PLOTLY_LAYOUT, height: 320, xaxis: { title: 'PC1', gridcolor: '#e8efee', zeroline: false }, yaxis: { title: 'PC2', gridcolor: '#e8efee', zeroline: false } }, PLOTLY_CONFIG);
+  Plotly.newPlot('chart-cluster-scatter', traces, plotlyLayout('chart-cluster-scatter', { height: 320, xaxis: { title: 'PC1', gridcolor: '#e8efee', zeroline: false }, yaxis: { title: 'PC2', gridcolor: '#e8efee', zeroline: false } }), PLOTLY_CONFIG);
 }
 
 // ── RFM Bar ────────────────────────────────────────────────────────────────
@@ -669,11 +695,11 @@ function renderRFMBar(rfm) {
   Plotly.newPlot('chart-rfm', [
     { type: 'bar', name: 'Customers', x: segs, y: rfm.map(r => r.customers||r.count||0), marker: { color: '#006a68' }, yaxis: 'y' },
     { type: 'bar', name: 'Revenue', x: segs, y: rfm.map(r => r.revenue||0), marker: { color: '#ffb347' }, yaxis: 'y2' },
-  ], { ...PLOTLY_LAYOUT, height: 320, barmode: 'group',
+  ], plotlyLayout('chart-rfm', { height: 320, barmode: 'group',
     yaxis: { title: 'Customers', gridcolor: '#e8efee' },
     yaxis2: { overlaying: 'y', side: 'right', title: 'Revenue ($)', tickprefix: '$', tickformat: ',.0f', gridcolor: 'transparent' },
-    xaxis: { tickangle: -30, tickfont: { size: 10 } },
-  }, PLOTLY_CONFIG);
+    xaxis: { tickangle: -30 },
+  }), PLOTLY_CONFIG);
 }
 
 // ── Lifecycle Donut ────────────────────────────────────────────────────────
@@ -685,20 +711,23 @@ function renderLifecycleDonut(lifecycle) {
     marker: { colors: COLORS },
     textinfo: 'percent',
     hovertemplate: '<b>%{label}</b><br>%{value} customers (%{percent})<extra></extra>',
-  }], { ...PLOTLY_LAYOUT, height: 320, margin: { t: 20, b: 20, l: 20, r: 20 } }, PLOTLY_CONFIG);
+  }], plotlyLayout('chart-lifecycle', { height: 320, margin: { t: 20, b: 20, l: 20, r: 20 } }), PLOTLY_CONFIG);
 }
 
 // ── Funnel ─────────────────────────────────────────────────────────────────
 function renderFunnel(overall) {
   const stages = overall.map(r => r.stage);
   const values = overall.map(r => r.sessions);
+  const fw = getContainerWidth('chart-funnel');
+  const fL = Math.round(Math.max(80, Math.min(120, fw * 0.18)));
+  const fR = Math.round(Math.max(50, Math.min(80, fw * 0.12)));
   Plotly.newPlot('chart-funnel', [{
     type: 'funnel',
     y: stages, x: values,
     textinfo: 'value+percent initial',
     marker: { color: ['#006a68','#05d8d5','#b5edea','#306765'] },
     connector: { line: { color: '#bacac8', width: 1 } },
-  }], { ...PLOTLY_LAYOUT, height: 320, funnelmode: 'stack', margin: { t: 10, b: 10, l: 120, r: 80 } }, PLOTLY_CONFIG);
+  }], plotlyLayout('chart-funnel', { height: 320, funnelmode: 'stack', margin: { t: 10, b: 10, l: fL, r: fR } }), PLOTLY_CONFIG);
 }
 
 // ── Segment Heatmap ────────────────────────────────────────────────────────
@@ -710,6 +739,8 @@ function renderSegmentHeatmap(device, source) {
   const devVals = stages.map(s => device.map(r => +(r[s]||0)*100));
   const srcVals = stages.map(s => source.map(r => +(r[s]||0)*100));
 
+  const hmLyt = plotlyLayout('chart-segment-heatmap');
+  const afs = Math.max(9, hmLyt.font.size - 1);
   Plotly.newPlot('chart-segment-heatmap', [
     { type: 'heatmap', x: deviceLabels, y: stageLabels,
       z: devVals, colorscale: [[0,'#eef5f4'],[1,'#006a68']], showscale: false,
@@ -721,14 +752,14 @@ function renderSegmentHeatmap(device, source) {
       hovertemplate: 'Source: %{x}<br>Stage: %{y}<br>Rate: %{z:.1f}%<extra></extra>',
       xaxis: 'x2', yaxis: 'y', name: 'Source',
     },
-  ], { ...PLOTLY_LAYOUT, height: 280,
+  ], { ...hmLyt, height: 280,
     grid: { rows: 1, columns: 2, pattern: 'independent' },
     xaxis: { domain: [0, 0.44], title: 'Device' },
     xaxis2: { domain: [0.56, 1], title: 'Traffic Source' },
     yaxis: { automargin: true },
     annotations: [
-      { text: 'Device Conversion', x: 0.22, xref: 'paper', y: 1.06, yref: 'paper', showarrow: false, font: { size: 11, family: 'Manrope', color: '#3b4949' } },
-      { text: 'Source Conversion', x: 0.78, xref: 'paper', y: 1.06, yref: 'paper', showarrow: false, font: { size: 11, family: 'Manrope', color: '#3b4949' } },
+      { text: 'Device Conversion', x: 0.22, xref: 'paper', y: 1.06, yref: 'paper', showarrow: false, font: { size: afs, family: 'Manrope', color: '#3b4949' } },
+      { text: 'Source Conversion', x: 0.78, xref: 'paper', y: 1.06, yref: 'paper', showarrow: false, font: { size: afs, family: 'Manrope', color: '#3b4949' } },
     ],
     showlegend: false,
   }, PLOTLY_CONFIG);
@@ -755,7 +786,7 @@ function renderSunburst(sunburst) {
       });
     });
   });
-  Plotly.newPlot('chart-sunburst', [{ type:'sunburst', ids, labels, parents, values, branchvalues:'total', marker:{ colorscale:'Teal' }, hovertemplate:'<b>%{label}</b><br>%{value} users<extra></extra>' }], { ...PLOTLY_LAYOUT, height: 340, margin:{t:10,b:10,l:10,r:10}, showlegend:false }, PLOTLY_CONFIG);
+  Plotly.newPlot('chart-sunburst', [{ type:'sunburst', ids, labels, parents, values, branchvalues:'total', marker:{ colorscale:'Teal' }, hovertemplate:'<b>%{label}</b><br>%{value} users<extra></extra>' }], plotlyLayout('chart-sunburst', { height: 340, margin:{t:10,b:10,l:10,r:10}, showlegend:false }), PLOTLY_CONFIG);
 }
 
 // ── Age Pyramid ────────────────────────────────────────────────────────────
@@ -766,27 +797,32 @@ function renderAgePyramid(age_gender) {
   Plotly.newPlot('chart-age-pyramid', [
     { type:'bar', orientation:'h', name:'Male', x: ages.map(a => { const r=male.find(m=>m.age_band===a); return r ? -Math.abs(r.users) : 0; }), y: ages, marker:{color:'#006a68'} },
     { type:'bar', orientation:'h', name:'Female', x: ages.map(a => { const r=female.find(f=>f.age_band===a); return r ? r.users : 0; }), y: ages, marker:{color:'#05d8d5'} },
-  ], { ...PLOTLY_LAYOUT, height: 340, barmode:'overlay', xaxis:{title:'Users', tickformat:',.0f', zeroline:true, zerolinecolor:'#bacac8', gridcolor:'#e8efee'}, yaxis:{automargin:true} }, PLOTLY_CONFIG);
+  ], plotlyLayout('chart-age-pyramid', { height: 340, barmode:'overlay', xaxis:{title:'Users', tickformat:',.0f', zeroline:true, zerolinecolor:'#bacac8', gridcolor:'#e8efee'}, yaxis:{automargin:true} }), PLOTLY_CONFIG);
 }
 
 // ── Retention Heatmap ──────────────────────────────────────────────────────
 function renderRetention(type, data) {
   const { cohorts, months, values } = data;
+  const chartId = `chart-retention-${type}`;
+  const lyt = plotlyLayout(chartId);
+  const rw = getContainerWidth(chartId);
+  const retL = Math.round(Math.max(60, Math.min(90, rw * 0.14)));
+  const retR = Math.round(Math.max(55, Math.min(80, rw * 0.12)));
   const zText = values.map(row => row.map(v => v == null ? '' : (v*100).toFixed(0)+'%'));
-  Plotly.newPlot(`chart-retention-${type}`, [{
+  Plotly.newPlot(chartId, [{
     type: 'heatmap',
     x: months.map(m => 'M' + m),
     y: cohorts,
     z: values,
     text: zText,
     texttemplate: '%{text}',
-    textfont: { size: 10, color: '#161d1d' },
+    textfont: { size: lyt.font.size, color: '#161d1d' },
     colorscale: [[0,'#eef5f4'],[0.5,'#05d8d5'],[1,'#006a68']],
     showscale: true,
     zmin: 0, zmax: 1,
     colorbar: { tickformat: ',.0%', len: 0.6, thickness: 12 },
     hovertemplate: 'Cohort: %{y}<br>Month: %{x}<br>Retention: %{z:.1%}<extra></extra>',
-  }], { ...PLOTLY_LAYOUT, height: 380, xaxis: { tickfont: { size: 10 } }, yaxis: { automargin: true, tickfont: { size: 10 } }, margin: { t: 20, b: 40, l: 90, r: 80 } }, PLOTLY_CONFIG);
+  }], { ...lyt, height: 380, xaxis: { tickfont: { size: lyt.font.size } }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { t: 20, b: 40, l: retL, r: retR } }, PLOTLY_CONFIG);
 }
 
 // ── Retention KPIs ─────────────────────────────────────────────────────────
