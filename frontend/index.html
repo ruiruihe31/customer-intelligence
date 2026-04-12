@@ -50,7 +50,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 .nav-link.active { color: #006a68; border-bottom-color: #006a68; }
 
 /* Cards */
-.card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 24px; }
+.card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 24px; min-width: 0; overflow: hidden; }
 .kpi-card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 20px 22px; position: relative; overflow: hidden; }
 .kpi-ribbon { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #05d8d5; border-radius: 16px 0 0 16px; }
 .kpi-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #3b4949; }
@@ -180,7 +180,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Active Users & Geo -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Active Users vs Sessions</div>
         <div class="section-sub" style="margin-bottom:16px;">Monthly active users and session volume</div>
@@ -201,7 +201,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <p class="section-sub">Sales rankings, sentiment analysis, and category insights.</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top 10 Products by Sales</div>
         <div id="chart-sales-rank"></div>
@@ -212,7 +212,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Sentiment Analysis</div>
         <div class="section-sub" style="margin-bottom:16px;">Positive / Neutral / Negative by category (VADER)</div>
@@ -256,7 +256,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Cluster + RFM -->
-    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Customer Clustering</div>
         <div class="section-sub" style="margin-bottom:16px;">PCA 2D projection of behavioral features</div>
@@ -270,7 +270,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Lifecycle + Funnel -->
-    <div style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px;margin-bottom:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Lifecycle Stages</div>
         <div class="section-sub" style="margin-bottom:16px;">Customer distribution by lifecycle</div>
@@ -291,7 +291,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
     </div>
 
     <!-- Demographics -->
-    <div style="display:grid;grid-template-columns:1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Demographics Breakdown</div>
         <div class="section-sub" style="margin-bottom:16px;">Region × Gender × Age Sunburst</div>
@@ -322,7 +322,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <div class="kpi-card"><div class="kpi-ribbon" style="background:#845400;"></div><div class="kpi-label">Cohorts Tracked</div><div class="kpi-value" id="ret-cohorts">—</div><div class="kpi-detail">Signup months</div></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;">
       <div class="card">
         <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Session Retention Cohort</div>
         <div class="section-sub" style="margin-bottom:16px;">Monthly cohort performance — session-based</div>
@@ -551,7 +551,7 @@ function renderGeo(geo) {
     colorscale: [[0,'#eef5f4'],[0.5,'#05d8d5'],[1,'#006a68']],
     showscale: true,
     colorbar: { len: 0.6, thickness: 12, tickprefix: '$', tickformat: ',.0f', title: { text: 'Revenue', side: 'right' } },
-  }], { ...PLOTLY_LAYOUT, height: 280, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 80 } }, PLOTLY_CONFIG);
+  }], { ...PLOTLY_LAYOUT, height: 280, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 60 } }, PLOTLY_CONFIG);
 }
 
 // ── Sales Rank ─────────────────────────────────────────────────────────────
