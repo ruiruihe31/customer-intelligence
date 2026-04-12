@@ -92,6 +92,10 @@ def safe_country_name(code: str) -> str:
     return COUNTRY_META.get(str(code), {}).get("name", str(code))
 
 
+def safe_country_alpha3(code: str) -> str:
+    return COUNTRY_META.get(str(code), {}).get("alpha3", "")
+
+
 def safe_region(code: str) -> str:
     return COUNTRY_META.get(str(code), {}).get("region", "Other")
 

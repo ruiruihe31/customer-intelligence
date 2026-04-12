@@ -17,6 +17,7 @@ from .utils import (
     get_mode_by_group,
     get_name_sets,
     infer_gender,
+    safe_country_alpha3,
     safe_country_name,
     safe_region,
 )
@@ -521,23 +522,37 @@ def geography_metrics(data: dict[str, pd.DataFrame]) -> pd.DataFrame:
     geo = sessions_country.join(orders_country, how="outer").fillna(0).reset_index()
     geo["country"] = geo["country"].astype(str)
     geo["country_name"] = geo["country"].map(safe_country_name)
+    geo["iso_alpha3"] = geo["country"].map(safe_country_alpha3)
     geo["region"] = geo["country"].map(safe_region)
     geo["conversion"] = np.where(geo["sessions"] > 0, geo["orders"] / geo["sessions"], 0)
+    # Keep only rows with a known ISO-3 code so the choropleth matches reliably
+    geo = geo[geo["iso_alpha3"] != ""].copy()
     return geo
 
 
 def demographic_frames(
     profile: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
+    # Convert Categorical age_band to plain strings before groupby to avoid
+    # null-category edge cases that break px.sunburst path hierarchy.
+    profile = profile.copy()
+    profile["age_band"] = profile["age_band"].astype(str).replace({"nan": "Unknown", "<NA>": "Unknown"})
+    profile["region"] = profile["region"].fillna("Unknown").astype(str)
+    profile["gender_inferred"] = profile["gender_inferred"].fillna("Unknown").astype(str)
+
     sunburst_frame = (
         profile.groupby(["region", "gender_inferred", "age_band"], observed=True)
         .size()
         .reset_index(name="users")
     )
     sunburst_frame = sunburst_frame.loc[sunburst_frame["users"] > 0].copy()
-    sunburst_frame["region"] = sunburst_frame["region"].fillna("Unknown")
-    sunburst_frame["gender_inferred"] = sunburst_frame["gender_inferred"].fillna("Unknown")
-    sunburst_frame["age_band"] = sunburst_frame["age_band"].astype(str).replace({"nan": "Unknown"})
+    # Drop any rows where path columns are empty/NaN — px.sunburst fails on these
+    sunburst_frame = sunburst_frame.dropna(subset=["region", "gender_inferred", "age_band"])
+    sunburst_frame = sunburst_frame[
+        (sunburst_frame["region"] != "") &
+        (sunburst_frame["gender_inferred"] != "") &
+        (sunburst_frame["age_band"].isin(["Unknown"] + AGE_LABELS))
+    ].copy()
 
     age_gender = profile.groupby(["age_band", "gender_inferred"], observed=True).size().reset_index(name="users")
     age_gender = age_gender.loc[age_gender["users"] > 0].copy()
