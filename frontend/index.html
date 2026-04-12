@@ -481,6 +481,11 @@ async function boot() {
       apiFetch('/api/customers/demographics'),
     ]);
 
+    // Show layout first so offsetWidth is correct when charts render
+    document.getElementById('loading-overlay').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    await new Promise(r => requestAnimationFrame(r));
+
     renderKPIs(kpis);
     renderRevenueTrend(monthly);
     renderUserSessions(monthly);
@@ -502,9 +507,6 @@ async function boot() {
     renderRetention('session', retention.session);
     renderRetention('purchase', retention.purchase);
     renderRetentionKPIs(retention);
-
-    document.getElementById('loading-overlay').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
   } catch (err) {
     document.getElementById('loading-overlay').innerHTML = `
       <div class="logo">InsightFlow</div>
