@@ -179,18 +179,18 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <div id="chart-revenue-trend"></div>
     </div>
 
-    <!-- Active Users -->
-    <div class="card" style="margin-bottom:24px;">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Active Users vs Sessions</div>
-      <div class="section-sub" style="margin-bottom:16px;">Monthly active users and session volume</div>
-      <div id="chart-users-sessions"></div>
-    </div>
-
-    <!-- Geo Heatmap — full width so the map and colorbar don't overflow -->
-    <div class="card">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Global Revenue Heatmap</div>
-      <div class="section-sub" style="margin-bottom:16px;">Revenue contribution by country</div>
-      <div id="chart-geo"></div>
+    <!-- Active Users & Geo -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Active Users vs Sessions</div>
+        <div class="section-sub" style="margin-bottom:16px;">Monthly active users and session volume</div>
+        <div id="chart-users-sessions"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Global Revenue Heatmap</div>
+        <div class="section-sub" style="margin-bottom:16px;">Revenue contribution by country</div>
+        <div id="chart-geo"></div>
+      </div>
     </div>
   </div>
 
@@ -201,14 +201,15 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <p class="section-sub">Sales rankings, sentiment analysis, and category insights.</p>
     </div>
 
-    <!-- Bar charts are full-width: long Y-axis product names overflow in half-width columns -->
-    <div class="card" style="margin-bottom:24px;">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top 10 Products by Sales</div>
-      <div id="chart-sales-rank"></div>
-    </div>
-    <div class="card" style="margin-bottom:24px;">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top Rated Products</div>
-      <div id="chart-rating-rank"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top 10 Products by Sales</div>
+        <div id="chart-sales-rank"></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top Rated Products</div>
+        <div id="chart-rating-rank"></div>
+      </div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
@@ -230,7 +231,7 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
       <div id="chart-category-trend"></div>
     </div>
 
-    <div class="card" style="margin-bottom:24px;">
+    <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <div>
           <div class="section-title" style="font-size:1rem;">Detailed Inventory Insights</div>
@@ -238,13 +239,6 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
         </div>
       </div>
       <div id="top-products-table"></div>
-    </div>
-
-    <!-- Word Clouds -->
-    <div class="card" id="wordcloud-card">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Review Keyword Clouds by Category</div>
-      <div class="section-sub" style="margin-bottom:16px;">Most frequent words in customer reviews per category</div>
-      <div id="wordcloud-section"><div class="spinner"></div></div>
     </div>
   </div>
 
@@ -448,7 +442,7 @@ async function apiFetch(path) {
 // ── Boot ───────────────────────────────────────────────────────────────────
 async function boot() {
   try {
-    const [kpis, monthly, geo, rfm, lifecycle, personas, cluster, sentiment, categories, retention, funnel, demographics, wordcloud] = await Promise.all([
+    const [kpis, monthly, geo, rfm, lifecycle, personas, cluster, sentiment, categories, retention, funnel, demographics] = await Promise.all([
       apiFetch('/api/kpis'),
       apiFetch('/api/monthly'),
       apiFetch('/api/geography'),
@@ -461,7 +455,6 @@ async function boot() {
       apiFetch('/api/retention'),
       apiFetch('/api/funnel'),
       apiFetch('/api/customers/demographics'),
-      apiFetch('/api/products/wordcloud'),
     ]);
 
     renderKPIs(kpis);
@@ -485,7 +478,6 @@ async function boot() {
     renderRetention('session', retention.session);
     renderRetention('purchase', retention.purchase);
     renderRetentionKPIs(retention);
-    renderWordClouds(wordcloud);
 
     document.getElementById('loading-overlay').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
@@ -550,7 +542,7 @@ function renderUserSessions(monthly) {
 function renderGeo(geo) {
   Plotly.newPlot('chart-geo', [{
     type: 'choropleth', locationmode: 'ISO-3',
-    locations: geo.map(r => r.iso_alpha3),
+    locations: geo.map(r => r.country),
     z: geo.map(r => r.revenue),
     text: geo.map(r => `${r.country_name || r.country}<br>Revenue: ${fmtCur(r.revenue)}<br>Orders: ${fmt(r.orders)}`),
     hovertemplate: '%{text}<extra></extra>',
@@ -743,21 +735,15 @@ function renderSegmentHeatmap(device, source) {
 // ── Sunburst ───────────────────────────────────────────────────────────────
 function renderSunburst(sunburst) {
   const ids = [], labels = [], parents = [], values = [];
-  // Filter out any rows with null/empty path segments to prevent Plotly errors
-  const clean = (sunburst || []).filter(r => r.region && r.gender_inferred && r.age_band && r.users > 0);
-  if (clean.length === 0) {
-    document.getElementById('chart-sunburst').innerHTML = '<p style="color:#3b4949;text-align:center;padding:40px 0;font-size:0.85rem;">No demographic data available.</p>';
-    return;
-  }
-  const regions = [...new Set(clean.map(r => r.region))];
+  const regions = [...new Set(sunburst.map(r => r.region))];
   regions.forEach(reg => {
     ids.push(reg); labels.push(reg); parents.push(''); values.push(0);
-    const genders = [...new Set(clean.filter(r => r.region===reg).map(r => r.gender_inferred))];
+    const genders = [...new Set(sunburst.filter(r => r.region===reg).map(r => r.gender_inferred))];
     genders.forEach(gen => {
       const gid = `${reg}|${gen}`;
-      const tot = clean.filter(r => r.region===reg && r.gender_inferred===gen).reduce((s,r)=>s+r.users,0);
+      const tot = sunburst.filter(r => r.region===reg && r.gender_inferred===gen).reduce((s,r)=>s+r.users,0);
       ids.push(gid); labels.push(gen); parents.push(reg); values.push(tot);
-      clean.filter(r => r.region===reg && r.gender_inferred===gen).forEach(r => {
+      sunburst.filter(r => r.region===reg && r.gender_inferred===gen).forEach(r => {
         ids.push(`${gid}|${r.age_band}`); labels.push(r.age_band); parents.push(gid); values.push(r.users);
       });
     });
@@ -871,26 +857,6 @@ async function lookupCustomer() {
   } catch {
     el.innerHTML = `<p style="color:#ba1a1a;font-size:0.85rem;">API error. Is the server running?</p>`;
   }
-}
-
-// ── Word Clouds ────────────────────────────────────────────────────────────
-function renderWordClouds(wc) {
-  const el = document.getElementById('wordcloud-section');
-  const entries = Object.entries(wc || {});
-  if (entries.length === 0) {
-    el.innerHTML = '<p style="color:#3b4949;font-size:0.85rem;">No review data available.</p>';
-    return;
-  }
-  const cols = Math.min(3, entries.length);
-  let html = `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:16px;">`;
-  entries.forEach(([cat, b64]) => {
-    html += `<div style="text-align:center;">
-      <div style="font-size:0.72rem;font-weight:600;color:#006a68;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">${cat}</div>
-      <img src="data:image/png;base64,${b64}" style="width:100%;border-radius:12px;" alt="${cat} keyword cloud">
-    </div>`;
-  });
-  html += '</div>';
-  el.innerHTML = html;
 }
 
 // ── Start ──────────────────────────────────────────────────────────────────
