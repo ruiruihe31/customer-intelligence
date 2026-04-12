@@ -425,6 +425,10 @@ document.querySelectorAll('.nav-link').forEach(link => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     link.classList.add('active');
     document.getElementById('tab-' + tab).classList.add('active');
+    // Resize Plotly charts after tab becomes visible (charts rendered while hidden get wrong dimensions)
+    setTimeout(() => {
+      document.querySelectorAll('#tab-' + tab + ' .js-plotly-plot').forEach(el => Plotly.Plots.resize(el));
+    }, 50);
   });
 });
 
@@ -541,15 +545,15 @@ function renderUserSessions(monthly) {
 // ── Geo Map ────────────────────────────────────────────────────────────────
 function renderGeo(geo) {
   Plotly.newPlot('chart-geo', [{
-    type: 'choropleth', locationmode: 'ISO-3',
-    locations: geo.map(r => r.country),
+    type: 'choropleth', locationmode: 'country names',
+    locations: geo.map(r => r.country_name),
     z: geo.map(r => r.revenue),
     text: geo.map(r => `${r.country_name || r.country}<br>Revenue: ${fmtCur(r.revenue)}<br>Orders: ${fmt(r.orders)}`),
     hovertemplate: '%{text}<extra></extra>',
     colorscale: [[0,'#eef5f4'],[0.5,'#05d8d5'],[1,'#006a68']],
     showscale: true,
     colorbar: { len: 0.6, thickness: 12, tickprefix: '$', tickformat: ',.0f', title: { text: 'Revenue', side: 'right' } },
-  }], { ...PLOTLY_LAYOUT, height: 280, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 10 } }, PLOTLY_CONFIG);
+  }], { ...PLOTLY_LAYOUT, height: 280, geo: { bgcolor: 'rgba(0,0,0,0)', showframe: false, showcoastlines: true, coastlinecolor: '#bacac8', showland: true, landcolor: '#eef5f4', showocean: true, oceancolor: '#f3fbfa', projection: { type: 'natural earth' } }, margin: { t: 10, b: 10, l: 10, r: 80 } }, PLOTLY_CONFIG);
 }
 
 // ── Sales Rank ─────────────────────────────────────────────────────────────
@@ -735,15 +739,20 @@ function renderSegmentHeatmap(device, source) {
 // ── Sunburst ───────────────────────────────────────────────────────────────
 function renderSunburst(sunburst) {
   const ids = [], labels = [], parents = [], values = [];
-  const regions = [...new Set(sunburst.map(r => r.region))];
+  const clean = (sunburst || []).filter(r => r.region && r.gender_inferred && r.age_band && r.users > 0);
+  if (clean.length === 0) {
+    document.getElementById('chart-sunburst').innerHTML = '<p style="color:#3b4949;text-align:center;padding:40px 0;font-size:0.85rem;">No demographic data available.</p>';
+    return;
+  }
+  const regions = [...new Set(clean.map(r => r.region))];
   regions.forEach(reg => {
     ids.push(reg); labels.push(reg); parents.push(''); values.push(0);
-    const genders = [...new Set(sunburst.filter(r => r.region===reg).map(r => r.gender_inferred))];
+    const genders = [...new Set(clean.filter(r => r.region===reg).map(r => r.gender_inferred))];
     genders.forEach(gen => {
       const gid = `${reg}|${gen}`;
-      const tot = sunburst.filter(r => r.region===reg && r.gender_inferred===gen).reduce((s,r)=>s+r.users,0);
+      const tot = clean.filter(r => r.region===reg && r.gender_inferred===gen).reduce((s,r)=>s+r.users,0);
       ids.push(gid); labels.push(gen); parents.push(reg); values.push(tot);
-      sunburst.filter(r => r.region===reg && r.gender_inferred===gen).forEach(r => {
+      clean.filter(r => r.region===reg && r.gender_inferred===gen).forEach(r => {
         ids.push(`${gid}|${r.age_band}`); labels.push(r.age_band); parents.push(gid); values.push(r.users);
       });
     });
