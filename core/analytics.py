@@ -361,7 +361,9 @@ def assign_cluster_personas(
     used: set[str] = set()
 
     for cluster_id, row in cluster_summary.sort_values(["revenue", "orders"], ascending=False).iterrows():
-        if row["revenue"] >= revenue_threshold and row["orders"] >= order_threshold:
+        if row["revenue"] <= 0 and row["orders"] <= 0:
+            label = "Never Purchased"
+        elif row["revenue"] >= revenue_threshold and row["orders"] >= order_threshold:
             label = "High-Value Repeat Buyers"
         elif row["sessions"] >= session_threshold and row["conversion"] < overall["conversion"]:
             label = "Heavy Browsers, Low Conversion"
@@ -382,11 +384,12 @@ def assign_cluster_personas(
     cluster_summary["cluster_name"] = cluster_summary.index.map(persona_names)
     cluster_summary["silhouette_score"] = dict(scores)[best_k]
 
+    region_counts = profile.groupby(["cluster_name", "region"]).size().reset_index(name="users")
+    region_totals = profile.groupby("cluster_name").size().rename("total").reset_index()
+    region_mix = region_counts.merge(region_totals, on="cluster_name")
+    region_mix["share"] = region_mix["users"] / region_mix["total"]
     region_mix = (
-        profile.groupby(["cluster_name", "region"])
-        .size()
-        .reset_index(name="users")
-        .sort_values(["cluster_name", "users"], ascending=[True, False])
+        region_mix.sort_values(["cluster_name", "users"], ascending=[True, False])
         .drop_duplicates("cluster_name")
     )
     source_mix = (
@@ -409,7 +412,9 @@ def assign_cluster_personas(
 
     persona_cards: list[dict[str, str]] = []
     for cluster_name, row in cluster_display.sort_values("revenue", ascending=False).iterrows():
-        top_region = region_mix.loc[region_mix["cluster_name"] == cluster_name, "region"].iloc[0]
+        region_row = region_mix.loc[region_mix["cluster_name"] == cluster_name].iloc[0]
+        top_region = region_row["region"]
+        top_region_share = float(region_row["share"])
         top_source = source_mix.loc[source_mix["cluster_name"] == cluster_name, "dominant_source"].iloc[0]
         persona_cards.append(
             {
@@ -422,6 +427,7 @@ def assign_cluster_personas(
                 "avg_age": f"{row['avg_age']:.1f}" if not pd.isna(row["avg_age"]) else "-",
                 "avg_rating": f"{row['avg_rating']:.2f}",
                 "top_region": top_region,
+                "top_region_pct": f"{top_region_share * 100:.0f}%",
                 "top_source": top_source,
             }
         )

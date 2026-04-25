@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <script>
 tailwind.config = {
   theme: {
@@ -45,17 +46,21 @@ body { font-family: 'Inter', sans-serif; background: #f8f9ff; color: #161d1d; ma
 h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 
 /* Nav */
-.nav-link { font-size: 0.8rem; font-weight: 500; padding: 6px 0; color: #3b4949; text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
-.nav-link:hover { color: #006a68; }
-.nav-link.active { color: #006a68; border-bottom-color: #006a68; }
+.nav-link { font-size: 0.875rem; font-weight: 600; padding: 0.5rem 1rem; color: #3b4949; text-decoration: none; border-radius: 0.75rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 0.5rem; }
+.nav-link:hover { color: #006a68; background: rgba(0, 106, 104, 0.05); }
+.nav-link.active { color: #ffffff; background: #006a68; box-shadow: 0 4px 12px rgba(0, 106, 104, 0.2); }
 
 /* Cards */
-.card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 24px; min-width: 0; overflow: hidden; }
-.kpi-card { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px -4px rgba(11,28,48,0.06); padding: 20px 22px; position: relative; overflow: hidden; }
-.kpi-ribbon { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #05d8d5; border-radius: 16px 0 0 16px; }
-.kpi-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #3b4949; }
-.kpi-value { font-family: 'Manrope', sans-serif; font-size: 1.9rem; font-weight: 700; color: #161d1d; line-height: 1.1; margin: 6px 0 4px; }
-.kpi-detail { font-size: 0.78rem; color: #3b4949; }
+.card { background: #ffffff; border-radius: 24px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); padding: 24px; border: 1px solid rgba(186,202,200,0.3); transition: box-shadow 0.3s ease; }
+.card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.kpi-card { background: #ffffff; border-radius: 24px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); padding: 24px; position: relative; overflow: hidden; border: 1px solid rgba(186,202,200,0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.kpi-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border-color: rgba(0, 106, 104, 0.2); }
+.kpi-icon-container { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.kpi-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #3b4949; }
+.kpi-value { font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 800; color: #161d1d; line-height: 1.1; margin: 8px 0 6px; }
+.kpi-detail { font-size: 0.8rem; color: #3b4949; display: flex; align-items: center; gap: 4px; }
+.trend-up { color: #008a00; font-weight: 600; }
+.trend-down { color: #ba1a1a; font-weight: 600; }
 
 /* Tabs */
 .tab-panel { display: none; }
@@ -74,9 +79,11 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 .tier-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; }
 
 /* Chat */
-.chat-bubble-user { background: #006a68; color: #fff; border-radius: 18px 18px 4px 18px; padding: 10px 16px; font-size: 0.875rem; align-self: flex-end; max-width: 75%; }
-.chat-bubble-bot { background: #ffffff; color: #161d1d; border-radius: 18px 18px 18px 4px; padding: 10px 16px; font-size: 0.875rem; align-self: flex-start; max-width: 75%; box-shadow: 0 2px 8px rgba(11,28,48,0.06); }
-.chat-scroll { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+#chat-messages::-webkit-scrollbar { width: 6px; }
+#chat-messages::-webkit-scrollbar-track { background: transparent; }
+#chat-messages::-webkit-scrollbar-thumb { background: #e2eae9; border-radius: 10px; }
+.chat-bubble-user { align-self: flex-end; background: #006a68; color: #fff; padding: 14px 18px; border-radius: 20px 20px 0 20px; max-width: 85%; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(0,106,104,0.15); }
+.chat-bubble-bot { align-self: flex-start; background: #fff; color: #161d1d; padding: 14px 18px; border-radius: 20px 20px 20px 0; max-width: 85%; font-size: 0.95rem; border: 1px solid #e2eae9; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
 
 /* Suggestion chips */
 .chip { background: #eef5f4; border: none; border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; color: #006a68; font-weight: 500; cursor: pointer; transition: background 0.15s; }
@@ -88,9 +95,15 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 .spinner { width: 36px; height: 36px; border: 3px solid #e8efee; border-top-color: #006a68; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 60px auto; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Chart Containers */
+.chart-container { position: relative; min-height: 300px; width: 100%; background: rgba(248, 250, 252, 0.5); border-radius: 16px; margin-top: 12px; overflow: hidden; }
+.chart-container.loading, .chart-container:has(.empty-state) { display: flex; align-items: center; justify-content: center; }
+.chart-container.loading::after { content: ""; width: 24px; height: 24px; border: 2px solid #e2eae9; border-top-color: #006a68; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.chart-container .empty-state { color: #64748b; font-size: 0.875rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
 /* Section title */
-.section-title { font-family: 'Manrope', sans-serif; font-size: 1.4rem; font-weight: 700; color: #161d1d; }
-.section-sub { font-size: 0.82rem; color: #3b4949; margin-top: 2px; }
+.section-title { font-family: 'Manrope', sans-serif; font-size: 1.4rem; font-weight: 800; color: #161d1d; letter-spacing: -0.02em; }
+.section-sub { font-size: 0.875rem; color: #64748b; margin-top: 2px; font-weight: 500; }
 
 /* Button */
 .btn-primary { background: #006a68; color: #fff; border: none; border-radius: 12px; padding: 10px 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
@@ -128,20 +141,54 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 </div>
 
 <!-- Top Navigation -->
-<nav style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);box-shadow:0 4px 24px -4px rgba(11,28,48,0.07);padding:0 32px;">
-  <div style="max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:56px;">
-    <div style="display:flex;align-items:center;gap:32px;">
-      <span style="font-family:'Manrope',sans-serif;font-size:1.1rem;font-weight:800;color:#006a68;letter-spacing:-0.02em;">InsightFlow</span>
-      <div style="display:flex;gap:24px;align-items:center;">
-        <a class="nav-link active" href="#" data-tab="overview">Overview</a>
-        <a class="nav-link" href="#" data-tab="products">Products</a>
-        <a class="nav-link" href="#" data-tab="customers">Customers</a>
-        <a class="nav-link" href="#" data-tab="retention">Retention</a>
-        <a class="nav-link" href="#" data-tab="chatbot">Chatbot</a>
+<nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-6 sm:px-12">
+  <div class="max-w-[1400px] mx-auto flex justify-between items-center h-16">
+    <div class="flex items-center gap-8 sm:gap-12">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="font-headline text-xl font-extrabold text-primary tracking-tight hidden sm:block">InsightFlow</span>
+      </div>
+      <div class="hidden md:flex gap-2 items-center">
+        <a class="nav-link active" href="#" data-tab="overview">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          Overview
+        </a>
+        <a class="nav-link" href="#" data-tab="products">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          Products
+        </a>
+        <a class="nav-link" href="#" data-tab="customers">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          Customers
+        </a>
+        <a class="nav-link" href="#" data-tab="retention">
+          <i data-lucide="repeat" class="w-4 h-4"></i>
+          Retention
+        </a>
+        <a class="nav-link" href="#" data-tab="chatbot">
+          <i data-lucide="bot" class="w-4 h-4"></i>
+          AI Assistant
+        </a>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div style="width:32px;height:32px;border-radius:50%;background:#05d8d5;display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-size:0.75rem;font-weight:700;color:#fff;">AI</div>
+    <div class="flex items-center gap-4">
+      <button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors relative">
+        <i data-lucide="bell" class="w-5 h-5"></i>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+      </button>
+      <div class="h-8 w-[1px] bg-gray-200 mx-1 hidden sm:block"></div>
+      <div class="flex items-center gap-3 pl-1">
+        <div class="w-9 h-9 border-2 border-primary-container rounded-full bg-secondary-container flex items-center justify-center font-headline text-sm font-bold text-primary">AI</div>
+        <div class="hidden lg:block">
+          <div class="text-[0.7rem] font-bold text-primary uppercase tracking-wider">System Status</div>
+          <div class="text-[0.75rem] text-emerald-600 font-semibold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            Operational
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -151,250 +198,475 @@ h1, h2, h3, h4, .headline { font-family: 'Manrope', sans-serif; }
 
   <!-- ══════════════ OVERVIEW ══════════════ -->
   <div class="tab-panel active" id="tab-overview">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
       <div>
-        <h1 class="section-title">Overview Dashboard</h1>
-        <p class="section-sub">Real-time performance analytics for your platform.</p>
+        <h1 class="section-title text-3xl">Executive Dashboard</h1>
+        <p class="section-sub text-lg">Real-time performance metrics and business intelligence.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="btn-outline flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          Export PDF
+        </button>
+        <button class="btn-primary flex items-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          Custom Range
+        </button>
       </div>
     </div>
 
     <!-- KPI Cards -->
-    <div id="kpi-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:28px;">
-      <div class="kpi-card"><div class="kpi-ribbon"></div><div class="kpi-label">Customers</div><div class="kpi-value" id="kpi-customers">—</div><div class="kpi-detail" id="kpi-customers-d">—</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#ffb347;"></div><div class="kpi-label">Sessions</div><div class="kpi-value" id="kpi-sessions">—</div><div class="kpi-detail" id="kpi-sessions-d">—</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#306765;"></div><div class="kpi-label">Orders</div><div class="kpi-value" id="kpi-orders">—</div><div class="kpi-detail" id="kpi-orders-d">—</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#006a68;"></div><div class="kpi-label">Revenue</div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-detail" id="kpi-revenue-d">—</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#845400;"></div><div class="kpi-label">Conversion</div><div class="kpi-value" id="kpi-conversion">—</div><div class="kpi-detail" id="kpi-conversion-d">—</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#b5edea;"></div><div class="kpi-label">Avg Rating</div><div class="kpi-value" id="kpi-rating">—</div><div class="kpi-detail" id="kpi-rating-d">—</div></div>
+    <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+      <div class="kpi-card">
+        <div class="kpi-icon-container bg-emerald-50 text-emerald-600">
+          <i data-lucide="users" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Customers</div>
+        <div class="kpi-value" id="kpi-customers">—</div>
+        <div class="kpi-detail" id="kpi-customers-d">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon-container bg-blue-50 text-blue-600">
+          <i data-lucide="mouse-pointer-2" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Sessions</div>
+        <div class="kpi-value" id="kpi-sessions">—</div>
+        <div class="kpi-detail" id="kpi-sessions-d">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon-container bg-teal-50 text-teal-600">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Orders</div>
+        <div class="kpi-value" id="kpi-orders">—</div>
+        <div class="kpi-detail" id="kpi-orders-d">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon-container bg-indigo-50 text-indigo-600">
+          <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Revenue</div>
+        <div class="kpi-value" id="kpi-revenue">—</div>
+        <div class="kpi-detail" id="kpi-revenue-d">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon-container bg-orange-50 text-orange-600">
+          <i data-lucide="trending-up" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Conversion</div>
+        <div class="kpi-value" id="kpi-conversion">—</div>
+        <div class="kpi-detail" id="kpi-conversion-d">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon-container bg-yellow-50 text-yellow-600">
+          <i data-lucide="star" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Avg Rating</div>
+        <div class="kpi-value" id="kpi-rating">—</div>
+        <div class="kpi-detail" id="kpi-rating-d">—</div>
+      </div>
     </div>
 
     <!-- Revenue Trend -->
-    <div class="card" style="margin-bottom:24px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="card mb-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <div>
-          <div class="section-title" style="font-size:1rem;">Monthly Revenue Trend</div>
-          <div class="section-sub">Performance tracking against 3-month rolling average</div>
+          <h3 class="section-title text-xl">Monthly Revenue Trend</h3>
+          <p class="section-sub">Performance tracking against 3-month rolling average</p>
+        </div>
+        <div class="flex items-center gap-2 p-1.5 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white shadow-sm border border-slate-200/50">
+            <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+            <span class="text-[0.7rem] font-bold text-slate-600 uppercase">Actual</span>
+          </div>
+          <div class="flex items-center gap-1.5 px-2.5 py-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
+            <span class="text-[0.7rem] font-bold text-slate-500 uppercase">Rolling Avg</span>
+          </div>
         </div>
       </div>
-      <div id="chart-revenue-trend"></div>
+      <div id="chart-revenue-trend" class="chart-container loading min-h-[300px]"></div>
     </div>
 
     <!-- Active Users & Geo -->
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Active Users vs Sessions</div>
-        <div class="section-sub" style="margin-bottom:16px;">Monthly active users and session volume</div>
-        <div id="chart-users-sessions"></div>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary shadow-sm">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="section-title text-lg">Active Users vs Sessions</h3>
+            <p class="section-sub">Engagement metrics over time</p>
+          </div>
+        </div>
+        <div id="chart-users-sessions" class="chart-container loading min-h-[300px]"></div>
       </div>
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Global Revenue Heatmap</div>
-        <div class="section-sub" style="margin-bottom:16px;">Revenue contribution by country</div>
-        <div id="chart-geo"></div>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary shadow-sm">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="section-title text-lg">Global Revenue Heatmap</h3>
+            <p class="section-sub">Geographic distribution of sales</p>
+          </div>
+        </div>
+        <div id="chart-geo" class="chart-container loading min-h-[300px]"></div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════ PRODUCTS ══════════════ -->
   <div class="tab-panel" id="tab-products">
-    <div style="margin-bottom:28px;">
-      <h1 class="section-title">Product Performance</h1>
-      <p class="section-sub">Sales rankings, sentiment analysis, and category insights.</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:24px;">
-      <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top 10 Products by Sales</div>
-        <div id="chart-sales-rank"></div>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+      <div>
+        <h1 class="section-title text-3xl">Product Performance</h1>
+        <p class="section-sub text-lg text-slate-500">Sales rankings, sentiment analysis, and category insights.</p>
       </div>
-      <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Top Rated Products</div>
-        <div id="chart-rating-rank"></div>
+      <div class="p-1 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center gap-1">
+        <button class="px-4 py-2 bg-slate-50 text-slate-900 rounded-lg text-xs font-bold border border-slate-200">Total Sales</button>
+        <button class="px-4 py-2 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-bold transition-colors">By Category</button>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Sentiment Analysis</div>
-        <div class="section-sub" style="margin-bottom:16px;">Positive / Neutral / Negative by category (VADER)</div>
-        <div id="chart-sentiment"></div>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="section-title text-lg">Top 10 Products by Sales</h3>
+          <div class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div id="chart-sales-rank" class="chart-container loading min-h-[320px]"></div>
       </div>
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Rating vs Revenue by Category</div>
-        <div class="section-sub" style="margin-bottom:16px;">Bubble size = units sold</div>
-        <div id="chart-category-bubble"></div>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="section-title text-lg">Top Rated Products</h3>
+          <div class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+            <i data-lucide="star" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div id="chart-rating-rank" class="chart-container loading min-h-[320px]"></div>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:24px;">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Category Revenue Trend</div>
-      <div class="section-sub" style="margin-bottom:16px;">Monthly revenue by product category</div>
-      <div id="chart-category-trend"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div class="card">
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Sentiment Analysis</h3>
+          <p class="section-sub">Customer feedback distribution by category (VADER)</p>
+        </div>
+        <div id="chart-sentiment" class="chart-container loading min-h-[300px]"></div>
+      </div>
+      <div class="card">
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Rating vs Revenue by Category</h3>
+          <p class="section-sub">Correlation between quality and performance</p>
+        </div>
+        <div id="chart-category-bubble" class="chart-container loading min-h-[300px]"></div>
+      </div>
     </div>
 
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="card mb-8">
+      <div class="mb-6">
+        <h3 class="section-title text-lg">Category Revenue Trend</h3>
+        <p class="section-sub">Monthly performance contribution per category</p>
+      </div>
+      <div id="chart-category-trend" class="chart-container loading min-h-[280px]"></div>
+    </div>
+
+    <div class="card border-none shadow-none bg-transparent p-0">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary shadow-sm">
+          <i data-lucide="list" class="w-5 h-5"></i>
+        </div>
         <div>
-          <div class="section-title" style="font-size:1rem;">Detailed Inventory Insights</div>
-          <div class="section-sub">Top products by revenue performance</div>
+          <h3 class="section-title text-xl">Detailed Inventory Insights</h3>
+          <p class="section-sub">Comprehensive performance data for top-tier products</p>
         </div>
       </div>
-      <div id="top-products-table"></div>
+      <div id="top-products-table" class="bg-white border border-slate-100 rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden"></div>
     </div>
   </div>
 
   <!-- ══════════════ CUSTOMERS ══════════════ -->
   <div class="tab-panel" id="tab-customers">
-    <div style="margin-bottom:28px;">
-      <h1 class="section-title">Customer Insights</h1>
-      <p class="section-sub">Segmentation, behavior analysis, and funnel performance.</p>
+    <div class="mb-10">
+      <h1 class="section-title text-3xl">Customer Intelligence</h1>
+      <p class="section-sub text-lg text-slate-500">Segmentation, behavioral analysis, and conversion funnel performance.</p>
     </div>
 
     <!-- Persona cards -->
-    <div class="card" style="margin-bottom:24px;">
-      <div class="section-title" style="font-size:1rem;margin-bottom:16px;">Customer Personas</div>
-      <div id="persona-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;"></div>
+    <div class="mb-10">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="section-title text-xl">Core Customer Personas</h3>
+        <span class="px-3 py-1 bg-primary/5 text-primary text-[0.65rem] font-bold uppercase tracking-widest rounded-full border border-primary/10">Dynamic Clusters</span>
+      </div>
+      <div id="persona-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
     </div>
 
     <!-- Cluster + RFM -->
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-bottom:24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Customer Clustering</div>
-        <div class="section-sub" style="margin-bottom:16px;">PCA 2D projection of behavioral features</div>
-        <div id="chart-cluster-scatter"></div>
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Customer Behavioral Clustering</h3>
+          <p class="section-sub">PCA 2D projection of user features</p>
+        </div>
+        <div id="chart-cluster-scatter" class="chart-container loading min-h-[320px]"></div>
       </div>
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">RFM Segments</div>
-        <div class="section-sub" style="margin-bottom:16px;">Customer count and revenue by RFM segment</div>
-        <div id="chart-rfm"></div>
+        <div class="mb-6">
+          <h3 class="section-title text-lg">RFM Segments Distribution</h3>
+          <p class="section-sub">Customer volume and revenue by lifecycle segment</p>
+        </div>
+        <div id="chart-rfm" class="chart-container loading min-h-[320px]"></div>
       </div>
     </div>
 
     <!-- Lifecycle + Funnel -->
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px;margin-bottom:24px;">
-      <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Lifecycle Stages</div>
-        <div class="section-sub" style="margin-bottom:16px;">Customer distribution by lifecycle</div>
-        <div id="chart-lifecycle"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+      <div class="card lg:col-span-4">
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Lifecycle Distribution</h3>
+          <p class="section-sub">Active vs At-risk users</p>
+        </div>
+        <div id="chart-lifecycle" class="chart-container loading min-h-[320px]"></div>
       </div>
-      <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Conversion Funnel</div>
-        <div class="section-sub" style="margin-bottom:16px;">Session-level drop-off analysis</div>
-        <div id="chart-funnel"></div>
+      <div class="card lg:col-span-8">
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Conversion Funnel Analysis</h3>
+          <p class="section-sub">Session-level drop-off and abandonment rates</p>
+        </div>
+        <div id="chart-funnel" class="chart-container loading min-h-[320px]"></div>
       </div>
     </div>
 
     <!-- Device + Source heatmap -->
-    <div class="card" style="margin-bottom:24px;">
-      <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Conversion by Device &amp; Source</div>
-      <div class="section-sub" style="margin-bottom:16px;">Stage-by-stage conversion rates across segments</div>
-      <div id="chart-segment-heatmap"></div>
+    <div class="card mb-8">
+      <div class="mb-6">
+        <h3 class="section-title text-lg text-center">Cross-Segment Conversion Heatmap</h3>
+        <p class="section-sub text-center">Performance analysis across devices and traffic channels</p>
+      </div>
+      <div id="chart-segment-heatmap" class="chart-container loading min-h-[280px]"></div>
     </div>
 
     <!-- Demographics -->
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Demographics Breakdown</div>
-        <div class="section-sub" style="margin-bottom:16px;">Region × Gender × Age Sunburst</div>
-        <div id="chart-sunburst"></div>
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Geographic & Gender Breakdown</h3>
+          <p class="section-sub">Hierarchical distribution of user segments</p>
+        </div>
+        <div id="chart-sunburst" class="chart-container loading min-h-[340px]"></div>
       </div>
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Age &amp; Gender Distribution</div>
-        <div class="section-sub" style="margin-bottom:16px;">Population pyramid by age group</div>
-        <div id="chart-age-pyramid"></div>
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Population Demographics</h3>
+          <p class="section-sub">Age group and gender pyramid distribution</p>
+        </div>
+        <div id="chart-age-pyramid" class="chart-container loading min-h-[340px]"></div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════ RETENTION ══════════════ -->
   <div class="tab-panel" id="tab-retention">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-10">
       <div>
-        <h1 class="section-title">Retention Analysis</h1>
-        <p class="section-sub">Analyze cohort behavior and user stickiness across time intervals.</p>
+        <h1 class="section-title text-3xl">Retention & Lifetime Value</h1>
+        <p class="section-sub text-lg text-slate-500">Analyze cohort behavior and user stickiness across time intervals.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2 hover:bg-slate-50 transition-colors">
+          <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+          Filter Cohorts
+        </button>
       </div>
     </div>
 
     <!-- Retention KPIs -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;">
-      <div class="kpi-card"><div class="kpi-ribbon"></div><div class="kpi-label">Avg Customer Lifespan</div><div class="kpi-value" id="ret-lifespan">—</div><div class="kpi-detail">Months active</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#ffb347;"></div><div class="kpi-label">M1 Session Retention</div><div class="kpi-value" id="ret-m1-session">—</div><div class="kpi-detail">Avg across cohorts</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#306765;"></div><div class="kpi-label">M1 Purchase Retention</div><div class="kpi-value" id="ret-m1-purchase">—</div><div class="kpi-detail">Avg across cohorts</div></div>
-      <div class="kpi-card"><div class="kpi-ribbon" style="background:#845400;"></div><div class="kpi-label">Cohorts Tracked</div><div class="kpi-value" id="ret-cohorts">—</div><div class="kpi-detail">Signup months</div></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="kpi-card group">
+        <div class="kpi-icon-container bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+          <i data-lucide="clock" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Avg Lifespan</div>
+        <div class="kpi-value" id="ret-lifespan">—</div>
+        <div class="kpi-detail font-medium text-slate-400">Months of activity</div>
+      </div>
+      <div class="kpi-card group">
+        <div class="kpi-icon-container bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+          <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">M1 Retention (Session)</div>
+        <div class="kpi-value" id="ret-m1-session">—</div>
+        <div class="kpi-detail font-medium text-slate-400">Month-over-month engagement</div>
+      </div>
+      <div class="kpi-card group">
+        <div class="kpi-icon-container bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+          <i data-lucide="credit-card" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">M1 Retention (Order)</div>
+        <div class="kpi-value" id="ret-m1-purchase">—</div>
+        <div class="kpi-detail font-medium text-slate-400">Month-over-month purchasing</div>
+      </div>
+      <div class="kpi-card group">
+        <div class="kpi-icon-container bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+          <i data-lucide="database" class="w-5 h-5"></i>
+        </div>
+        <div class="kpi-label">Cohorts Analyzed</div>
+        <div class="kpi-value" id="ret-cohorts">—</div>
+        <div class="kpi-detail font-medium text-slate-400">Active monthly cohorts</div>
+      </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Session Retention Cohort</div>
-        <div class="section-sub" style="margin-bottom:16px;">Monthly cohort performance — session-based</div>
-        <div id="chart-retention-session"></div>
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Session Retention Cohort</h3>
+          <p class="section-sub">Engagement levels by registration month</p>
+        </div>
+        <div id="chart-retention-session" class="chart-container loading min-h-[380px]"></div>
       </div>
       <div class="card">
-        <div class="section-title" style="font-size:1rem;margin-bottom:4px;">Purchase Retention Cohort</div>
-        <div class="section-sub" style="margin-bottom:16px;">Monthly cohort performance — order-based</div>
-        <div id="chart-retention-purchase"></div>
+        <div class="mb-6">
+          <h3 class="section-title text-lg">Purchase Retention Cohort</h3>
+          <p class="section-sub">Monetization levels by registration month</p>
+        </div>
+        <div id="chart-retention-purchase" class="chart-container loading min-h-[380px]"></div>
       </div>
     </div>
   </div>
 
   <!-- ══════════════ CHATBOT ══════════════ -->
   <div class="tab-panel" id="tab-chatbot">
-    <div style="margin-bottom:28px;">
-      <h1 class="section-title">AI Data Assistant</h1>
-      <p class="section-sub">Ask questions about your data or look up a specific customer profile.</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;">
-
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       <!-- Chat panel -->
-      <div class="card" style="display:flex;flex-direction:column;height:640px;">
-        <!-- Bot intro -->
-        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;padding:16px;background:#eef5f4;border-radius:12px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:#006a68;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 1 5 5v1h1a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-7a3 3 0 0 1 3-3h1V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v1h6V7a3 3 0 0 0-3-3zm0 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="#fff"/></svg>
+      <div class="lg:col-span-8 flex flex-col h-[700px]">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="section-title text-3xl font-extrabold text-on-surface">AI Business Analyst</h1>
+            <p class="section-sub text-lg text-on-surface-variant">Ask questions about your data, trends, and customers.</p>
           </div>
-          <p style="font-size:0.875rem;color:#161d1d;margin:0;line-height:1.5;">Hello! I'm the InsightFlow AI Assistant. I can help you analyze customer behavior, revenue trends, product performance, and more. What would you like to explore today?</p>
+          <div class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            Agent Online
+          </div>
         </div>
 
-        <!-- Suggestion chips -->
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-          <button class="chip" onclick="sendSuggestion(this)">Total revenue this period</button>
-          <button class="chip" onclick="sendSuggestion(this)">How many customers do we have?</button>
-          <button class="chip" onclick="sendSuggestion(this)">Top selling products</button>
-          <button class="chip" onclick="sendSuggestion(this)">Retention rate overview</button>
-        </div>
-
-        <!-- Chat messages -->
-        <div class="chat-scroll" id="chat-messages" style="flex:1;padding:4px 0;min-height:0;"></div>
-
-        <!-- Input -->
-        <div style="display:flex;gap:10px;margin-top:16px;border-top:1px solid #eef5f4;padding-top:16px;">
-          <input class="search-input" id="chat-input" placeholder="Ask anything about your data…" onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;"/>
-          <button class="btn-primary" onclick="sendChat()" style="flex-shrink:0;padding:10px 18px;">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+        <div class="card flex-1 flex flex-col p-0 overflow-hidden bg-white/50 backdrop-blur-md border-gray-200/50 shadow-2xl shadow-primary/5">
+          <!-- Chat messages -->
+          <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
+                <i data-lucide="bot" class="w-6 h-6"></i>
+              </div>
+              <div class="bg-white p-5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 max-w-[85%]">
+                <p class="text-on-surface leading-relaxed text-[0.95rem]">Hello! I'm your InsightFlow AI analyst. I have access to your customer segments, revenue trends, and product performance. What would you like to explore today?</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <button class="px-3 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-xl text-xs font-bold transition-all border border-primary/10 flex items-center gap-2" onclick="sendSuggestion('Top performing product categories')">
+                    <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                    Top Categories
+                  </button>
+                  <button class="px-3 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-xl text-xs font-bold transition-all border border-primary/10 flex items-center gap-2" onclick="sendSuggestion('VIP customer segment overview')">
+                    <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+                    VIP Segment
+                  </button>
+                  <button class="px-3 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-xl text-xs font-bold transition-all border border-primary/10 flex items-center gap-2" onclick="sendSuggestion('Monthly retention trends')">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    Retention Trends
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Input Area -->
+          <div class="p-6 bg-white/80 border-t border-gray-100 backdrop-blur-sm">
+            <div class="relative flex items-center gap-3">
+              <div class="relative flex-1 group">
+                <input type="text" id="chat-input" 
+                  class="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all text-on-surface placeholder:text-gray-400 text-[0.95rem]" 
+                  placeholder="Ask a question about your business data..."
+                  onkeydown="if(event.key==='Enter')sendChat()">
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <button onclick="sendChat()" class="p-4 bg-primary hover:bg-primary-container text-white rounded-2xl shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0 group">
+                <i data-lucide="send" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Customer Insights Sidebar -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <div class="card">
-          <div class="section-title" style="font-size:1rem;margin-bottom:14px;">Customer Lookup</div>
-          <div style="display:flex;gap:8px;">
-            <input class="search-input" id="cid-input" placeholder="Enter Customer ID…" style="flex:1;" onkeydown="if(event.key==='Enter')lookupCustomer()"/>
-            <button class="btn-primary" onclick="lookupCustomer()">Search</button>
+      <!-- Sidebar -->
+      <div class="lg:col-span-4 space-y-6">
+        <!-- Customer Lookup -->
+        <div class="card bg-gradient-to-br from-white to-slate-50 border-gray-200 shadow-xl shadow-slate-200/50">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+              <i data-lucide="search" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-headline font-bold text-on-surface">Customer Lookup</h3>
+              <p class="text-xs text-on-surface-variant font-medium">Find detailed user profiles</p>
+            </div>
           </div>
-          <div id="customer-result" style="margin-top:16px;"></div>
+          
+          <div class="space-y-4">
+            <div class="relative group">
+              <input type="text" id="cid-input" 
+                class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm" 
+                placeholder="Enter Customer ID..."
+                onkeydown="if(event.key==='Enter')lookupCustomer()">
+              <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <button onclick="lookupCustomer()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-200 transition-all active:scale-95">
+              Search Profile
+            </button>
+          </div>
+          <div id="customer-result" class="mt-6"></div>
         </div>
 
-        <!-- CRM Reference -->
-        <div class="card">
-          <div class="section-title" style="font-size:0.9rem;margin-bottom:12px;">CRM Recommendations</div>
-          <div style="font-size:0.78rem;color:#3b4949;line-height:1.6;">
-            <div class="insight-ribbon" style="margin-bottom:8px;"><b>Champions</b> — VIP events + new product priority access</div>
-            <div class="insight-ribbon" style="margin-bottom:8px;border-left-color:#ffb347;"><b>At-Risk High Value</b> — Urgent win-back + targeted discount</div>
-            <div class="insight-ribbon" style="margin-bottom:8px;border-left-color:#306765;"><b>Cooling Down</b> — "We miss you" email + exclusive discount</div>
-            <div class="insight-ribbon" style="margin-bottom:8px;border-left-color:#845400;"><b>New Visitor</b> — Welcome email + first-order discount code</div>
-            <div class="insight-ribbon" style="border-left-color:#b5edea;"><b>Promotion Sensitive</b> — Flash sales; avoid full-price messaging</div>
+        <!-- Segment Quick Guide -->
+        <div class="card border-gray-200">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-headline font-bold text-on-surface">Strategy Guide</h3>
+              <p class="text-xs text-on-surface-variant font-medium">Recommended CRM actions</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                <span class="text-xs font-bold text-emerald-800">Champions</span>
+              </div>
+              <p class="text-[0.7rem] text-emerald-700 leading-relaxed font-medium">VIP events + priority access to new product launches.</p>
+            </div>
+            <div class="p-3 bg-rose-50 rounded-xl border border-rose-100">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="w-2 h-2 bg-rose-500 rounded-full"></span>
+                <span class="text-xs font-bold text-rose-800">At-Risk High Value</span>
+              </div>
+              <p class="text-[0.7rem] text-rose-700 leading-relaxed font-medium">Urgent win-back campaigns + targeted 20% discounts.</p>
+            </div>
+            <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                <span class="text-xs font-bold text-blue-800">New Visitors</span>
+              </div>
+              <p class="text-[0.7rem] text-blue-700 leading-relaxed font-medium">Welcome email sequences + first-order incentive codes.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -419,21 +691,35 @@ function getContainerWidth(id) {
 
 function plotlyLayout(id, extra) {
   const w = getContainerWidth(id);
-  const t = Math.max(0, Math.min(1, (w - 380) / 520)); // 0 at 380px → 1 at 900px
-  const fs  = Math.round(9  + t * 3);   // axis font:    9–12
-  const lfs = Math.max(8, fs - 1);      // legend font:  8–11
-  const ml  = Math.round(38 + t * 12);  // left margin:  38–50
-  const mb  = Math.round(24 + t * 16);  // bottom margin:24–40
-  const mt  = Math.round(12 + t * 8);   // top margin:   12–20
-  const mr  = Math.round(12 + t * 8);   // right margin: 12–20
+  const t = Math.max(0, Math.min(1, (w - 380) / 520));
+  const fs  = Math.round(10 + t * 2);
+  const lfs = Math.max(9, fs - 1);
+  const ml  = Math.round(40 + t * 15);
+  const mb  = Math.round(30 + t * 20);
+  const mt  = Math.round(20 + t * 10);
+  const mr  = Math.round(20 + t * 10);
   return Object.assign({
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor:  'rgba(0,0,0,0)',
-    font: { family: 'Inter, sans-serif', color: '#161d1d', size: fs },
+    font: { family: 'Inter, sans-serif', color: '#334155', size: fs },
     margin: { t: mt, b: mb, l: ml, r: mr },
     showlegend: true,
-    legend: { orientation: 'h', y: 0.99, x: 0.5, xanchor: 'center', yanchor: 'top',
-              font: { size: lfs }, bgcolor: 'rgba(255,255,255,0.75)' },
+    legend: { 
+      orientation: 'h', y: 1.1, x: 0.5, xanchor: 'center', yanchor: 'bottom',
+      font: { size: lfs, color: '#64748b' }, bgcolor: 'rgba(255,255,255,0)' 
+    },
+    xaxis: {
+      gridcolor: '#f1f5f9',
+      linecolor: '#f1f5f9',
+      tickfont: { color: '#64748b', size: lfs },
+      title: { font: { size: lfs, color: '#64748b' } }
+    },
+    yaxis: {
+      gridcolor: '#f1f5f9',
+      linecolor: '#f1f5f9',
+      tickfont: { color: '#64748b', size: lfs },
+      title: { font: { size: lfs, color: '#64748b' } }
+    }
   }, extra || {});
 }
 const PLOTLY_CONFIG = { displayModeBar: false, responsive: true };
@@ -463,6 +749,18 @@ async function apiFetch(path) {
   return r.json();
 }
 
+function showEmptyState(id, message = 'No data available for this period') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('loading');
+  el.innerHTML = `
+    <div class="empty-state">
+      <i data-lucide="bar-chart" class="w-8 h-8 opacity-20 mb-2"></i>
+      <p>${message}</p>
+    </div>`;
+  lucide.createIcons();
+}
+
 // ── Boot ───────────────────────────────────────────────────────────────────
 async function boot() {
   try {
@@ -484,6 +782,8 @@ async function boot() {
     // Show layout first so offsetWidth is correct when charts render
     document.getElementById('loading-overlay').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
+    
+    lucide.createIcons();
     await new Promise(r => requestAnimationFrame(r));
 
     renderKPIs(kpis);
@@ -507,6 +807,9 @@ async function boot() {
     renderRetention('session', retention.session);
     renderRetention('purchase', retention.purchase);
     renderRetentionKPIs(retention);
+
+    // Remove loading classes from all chart containers after rendering
+    document.querySelectorAll('.chart-container').forEach(el => el.classList.remove('loading'));
   } catch (err) {
     document.getElementById('loading-overlay').innerHTML = `
       <div class="logo">InsightFlow</div>
@@ -536,6 +839,7 @@ function renderKPIs(d) {
 
 // ── Revenue Trend ──────────────────────────────────────────────────────────
 function renderRevenueTrend(monthly) {
+  if (!monthly || monthly.length === 0) return showEmptyState('chart-revenue-trend');
   const months = monthly.map(r => r.month);
   const revenue = monthly.map(r => r.revenue);
   const rolling = monthly.map(r => r.rolling_revenue_3m);
@@ -545,7 +849,7 @@ function renderRevenueTrend(monthly) {
       fill: 'tozeroy', fillcolor: 'rgba(0,106,104,0.07)' },
     { x: months, y: rolling, type: 'scatter', mode: 'lines', name: '3M Rolling Avg',
       line: { color: '#ffb347', width: 2, dash: 'dot' } },
-  ], plotlyLayout('chart-revenue-trend', { height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee', zeroline: false }, xaxis: { gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
+  ], plotlyLayout('chart-revenue-trend', { height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', zeroline: false } }), PLOTLY_CONFIG);
 }
 
 // ── Users & Sessions ───────────────────────────────────────────────────────
@@ -558,9 +862,8 @@ function renderUserSessions(monthly) {
       line: { color: '#05d8d5', width: 2, dash: 'dash' }, marker: { size: 4 },
       yaxis: 'y2' },
   ], plotlyLayout('chart-users-sessions', { height: 280,
-    yaxis: { gridcolor: '#e8efee', zeroline: false, title: 'Active Users' },
+    yaxis: { zeroline: false, title: 'Active Users' },
     yaxis2: { overlaying: 'y', side: 'right', title: 'Sessions', gridcolor: 'transparent', zeroline: false },
-    xaxis: { gridcolor: '#e8efee' },
   }), PLOTLY_CONFIG);
 }
 
@@ -580,6 +883,7 @@ function renderGeo(geo) {
 
 // ── Sales Rank ─────────────────────────────────────────────────────────────
 function renderSalesRank(products) {
+  if (!products || products.length === 0) return showEmptyState('chart-sales-rank');
   const top = [...products].sort((a,b) => (b.total_qty||b.units||0)-(a.total_qty||a.units||0)).slice(0,10);
   const lyt = plotlyLayout('chart-sales-rank');
   const barL = Math.round(Math.max(90, Math.min(160, getContainerWidth('chart-sales-rank') * 0.26)));
@@ -589,11 +893,12 @@ function renderSalesRank(products) {
     y: top.map(p => (p.name||'').substring(0,30)).reverse(),
     marker: { color: top.map((_,i) => COLORS[i%COLORS.length]).reverse() },
     hovertemplate: '%{y}: %{x} units<extra></extra>',
-  }], { ...lyt, height: 320, xaxis: { title: 'Units Sold', gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { ...lyt.margin, l: barL } }, PLOTLY_CONFIG);
+  }], { ...lyt, height: 320, showlegend: false, xaxis: { ...lyt.xaxis, title: 'Units Sold' }, yaxis: { ...lyt.yaxis, automargin: true }, margin: { ...lyt.margin, l: barL } }, PLOTLY_CONFIG);
 }
 
 // ── Rating Rank ────────────────────────────────────────────────────────────
 function renderRatingRank(products) {
+  if (!products || products.length === 0) return showEmptyState('chart-rating-rank');
   const top = [...products].filter(p => p.avg_rating > 0).sort((a,b) => b.avg_rating - a.avg_rating).slice(0,10);
   const lyt = plotlyLayout('chart-rating-rank');
   const barL = Math.round(Math.max(90, Math.min(160, getContainerWidth('chart-rating-rank') * 0.26)));
@@ -603,34 +908,47 @@ function renderRatingRank(products) {
     y: top.map(p => (p.name||'').substring(0,30)).reverse(),
     marker: { color: '#05d8d5' },
     hovertemplate: '%{y}: %{x:.2f} ★<extra></extra>',
-  }], { ...lyt, height: 320, xaxis: { title: 'Avg Rating', range: [0, 5.5], gridcolor: '#e8efee' }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { ...lyt.margin, l: barL } }, PLOTLY_CONFIG);
+  }], { ...lyt, height: 320, showlegend: false, xaxis: { ...lyt.xaxis, title: 'Avg Rating', range: [0, 5.5] }, yaxis: { ...lyt.yaxis, automargin: true }, margin: { ...lyt.margin, l: barL } }, PLOTLY_CONFIG);
 }
 
 // ── Sentiment ──────────────────────────────────────────────────────────────
 function renderSentiment(sentiment) {
+  if (!sentiment || sentiment.length === 0) return showEmptyState('chart-sentiment');
   const cats = sentiment.map(r => r.category);
   Plotly.newPlot('chart-sentiment', [
     { type: 'bar', name: 'Positive', x: cats, y: sentiment.map(r => r.Positive||0), marker: { color: '#006a68' } },
     { type: 'bar', name: 'Neutral',  x: cats, y: sentiment.map(r => r.Neutral||0),  marker: { color: '#b5edea' } },
     { type: 'bar', name: 'Negative', x: cats, y: sentiment.map(r => r.Negative||0), marker: { color: '#ffb347' } },
-  ], plotlyLayout('chart-sentiment', { barmode: 'stack', height: 300, yaxis: { ticksuffix: '%', gridcolor: '#e8efee' }, xaxis: { gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
+  ], plotlyLayout('chart-sentiment', { barmode: 'stack', height: 300, yaxis: { ticksuffix: '%' } }), PLOTLY_CONFIG);
 }
 
 // ── Category Bubble ────────────────────────────────────────────────────────
 function renderCategoryBubble(perf) {
+  if (!perf || perf.length === 0) return showEmptyState('chart-category-bubble');
+  const units = perf.map(r => r.units||1);
+  const maxUnits = Math.max(...units);
   Plotly.newPlot('chart-category-bubble', [{
     type: 'scatter', mode: 'markers+text',
     x: perf.map(r => r.avg_rating||0),
     y: perf.map(r => r.revenue||0),
     text: perf.map(r => r.category||r.index||''),
     textposition: 'top center',
-    marker: { size: perf.map(r => Math.sqrt(r.units||1)*3), color: COLORS, opacity: 0.8, sizemode: 'diameter' },
+    marker: {
+      size: units,
+      sizemode: 'area',
+      sizeref: 2.0 * maxUnits / (50**2),
+      sizemin: 4,
+      color: COLORS,
+      opacity: 0.55,
+      line: { color: 'rgba(255,255,255,0.8)', width: 1 },
+    },
     hovertemplate: '<b>%{text}</b><br>Rating: %{x:.2f}<br>Revenue: $%{y:,.0f}<extra></extra>',
-  }], plotlyLayout('chart-category-bubble', { height: 300, showlegend: false, xaxis: { title: 'Avg Rating', gridcolor: '#e8efee', range: [0, 5.5] }, yaxis: { title: 'Revenue (USD)', tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
+  }], plotlyLayout('chart-category-bubble', { height: 300, showlegend: false, xaxis: { ...plotlyLayout().xaxis, title: 'Avg Rating', range: [0, 5.5] }, yaxis: { ...plotlyLayout().yaxis, title: 'Revenue (USD)', tickprefix: '$', tickformat: ',.0f' } }), PLOTLY_CONFIG);
 }
 
 // ── Category Trend ─────────────────────────────────────────────────────────
 function renderCategoryTrend(monthly) {
+  if (!monthly || monthly.length === 0) return showEmptyState('chart-category-trend');
   const cats = [...new Set(monthly.map(r => r.category))];
   const months = [...new Set(monthly.map(r => r.month))].sort();
   const traces = cats.map((cat, i) => ({
@@ -641,44 +959,95 @@ function renderCategoryTrend(monthly) {
     stackgroup: 'one',
     fillcolor: COLORS[i%COLORS.length],
   }));
-  Plotly.newPlot('chart-category-trend', traces, plotlyLayout('chart-category-trend', { height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f', gridcolor: '#e8efee' }, xaxis: { gridcolor: '#e8efee' } }), PLOTLY_CONFIG);
+  Plotly.newPlot('chart-category-trend', traces, plotlyLayout('chart-category-trend', { height: 280, yaxis: { tickprefix: '$', tickformat: ',.0f' } }), PLOTLY_CONFIG);
 }
 
 // ── Top Products Table ─────────────────────────────────────────────────────
 function renderTopProductsTable(products) {
-  const top = [...products].sort((a,b) => (b.total_revenue||b.revenue||0)-(a.total_revenue||a.revenue||0)).slice(0,12);
   const el = document.getElementById('top-products-table');
-  el.innerHTML = `<table class="data-table">
-    <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Revenue</th><th>Units</th><th>Rating</th></tr></thead>
-    <tbody>${top.map((p,i) => `<tr>
-      <td style="color:#3b4949;font-weight:600;">${i+1}</td>
-      <td style="font-weight:500;">${p.name||'—'}</td>
-      <td><span style="background:#eef5f4;color:#006a68;font-size:0.72rem;padding:2px 8px;border-radius:20px;">${p.category||'—'}</span></td>
-      <td>${fmtCur(p.total_revenue||p.revenue||0)}</td>
-      <td>${fmt(p.total_qty||p.units||0)}</td>
-      <td>${(p.avg_rating||0).toFixed(2)} ★</td>
-    </tr>`).join('')}</tbody>
-  </table>`;
+  if (!products || products.length === 0) {
+    el.innerHTML = '<div class="p-12 text-center text-slate-500 font-medium">No product data available.</div>';
+    return;
+  }
+  const top = [...products].sort((a,b) => (b.total_revenue||b.revenue||0)-(a.total_revenue||a.revenue||0)).slice(0,12);
+  el.innerHTML = `<div class="overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="px-6 py-4 bg-slate-50/50 text-left text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">#</th>
+          <th class="px-6 py-4 bg-slate-50/50 text-left text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Product</th>
+          <th class="px-6 py-4 bg-slate-50/50 text-left text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Category</th>
+          <th class="px-6 py-4 bg-slate-50/50 text-right text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Revenue</th>
+          <th class="px-6 py-4 bg-slate-50/50 text-right text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Units</th>
+          <th class="px-6 py-4 bg-slate-50/50 text-right text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Rating</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        ${top.map((p,i) => `
+        <tr class="hover:bg-slate-50/50 transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-400">${i+1}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-bold text-slate-900">${p.name||'—'}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/5 text-primary">
+              ${p.category||'—'}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-900">${fmtCur(p.total_revenue||p.revenue||0)}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-slate-600">${fmt(p.total_qty||p.units||0)}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <div class="flex items-center justify-end gap-1 text-amber-500 font-bold text-sm">
+              <span>${(p.avg_rating||0).toFixed(1)}</span>
+              <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+  lucide.createIcons();
 }
 
 // ── Persona Cards ──────────────────────────────────────────────────────────
 function renderPersonaCards(personas) {
   const el = document.getElementById('persona-cards');
   el.innerHTML = personas.map(p => `
-    <div class="persona-card">
-      <div class="persona-label">Persona</div>
-      <div class="persona-name">${p.cluster_name||'—'}</div>
-      <div class="persona-stat"><b>${p.users}</b> users</div>
-      <div class="persona-stat">Revenue/user: <b>${p.revenue}</b></div>
-      <div class="persona-stat">Orders/user: <b>${p.orders}</b></div>
-      <div class="persona-stat">Conversion: <b>${p.conversion}</b></div>
-      <div class="persona-stat">Avg age: <b>${p.avg_age}</b></div>
-      <div style="margin-top:8px;font-size:0.72rem;color:#3b4949;">${p.top_region||''} / ${p.top_source||''}</div>
+    <div class="p-6 bg-white border border-slate-100 rounded-2xl hover:shadow-lg transition-all duration-300 group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-2 bg-primary/5 text-primary rounded-xl group-hover:bg-primary group-hover:text-white transition-colors">
+          <i data-lucide="user-check" class="w-5 h-5"></i>
+        </div>
+        <div class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">${p.top_region||'Global'}${p.top_region_pct ? ' · ' + p.top_region_pct : ''}</div>
+      </div>
+      <h3 class="font-headline font-bold text-slate-900 mb-1">${p.cluster_name||'Persona'}</h3>
+      <p class="text-xs text-slate-500 font-medium mb-4">${p.users} Active Users</p>
+      
+      <div class="space-y-3 pt-4 border-t border-slate-50">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500 font-medium">Revenue/User</span>
+          <span class="text-slate-900 font-bold">${p.revenue}</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500 font-medium">Orders/User</span>
+          <span class="text-slate-900 font-bold">${p.orders}</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500 font-medium">Conversion</span>
+          <span class="text-emerald-600 font-bold">${p.conversion}</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500 font-medium">Avg Age</span>
+          <span class="text-slate-900 font-bold">${p.avg_age}</span>
+        </div>
+      </div>
     </div>`).join('');
+  lucide.createIcons();
 }
 
 // ── Cluster Scatter ────────────────────────────────────────────────────────
 function renderClusterScatter(scatter) {
+  if (!scatter || scatter.length === 0) return showEmptyState('chart-cluster-scatter');
   const clusterNames = [...new Set(scatter.map(r => r.cluster_name))];
   const traces = clusterNames.map((name, i) => {
     const pts = scatter.filter(r => r.cluster_name === name);
@@ -688,24 +1057,26 @@ function renderClusterScatter(scatter) {
       hovertemplate: `<b>${name}</b><extra></extra>`,
     };
   });
-  Plotly.newPlot('chart-cluster-scatter', traces, plotlyLayout('chart-cluster-scatter', { height: 320, xaxis: { title: 'PC1', gridcolor: '#e8efee', zeroline: false }, yaxis: { title: 'PC2', gridcolor: '#e8efee', zeroline: false } }), PLOTLY_CONFIG);
+  Plotly.newPlot('chart-cluster-scatter', traces, plotlyLayout('chart-cluster-scatter', { height: 320, xaxis: { ...plotlyLayout().xaxis, title: 'PC1', zeroline: false }, yaxis: { ...plotlyLayout().yaxis, title: 'PC2', zeroline: false } }), PLOTLY_CONFIG);
 }
 
 // ── RFM Bar ────────────────────────────────────────────────────────────────
 function renderRFMBar(rfm) {
+  if (!rfm || rfm.length === 0) return showEmptyState('chart-rfm');
   const segs = rfm.map(r => r.rfm_segment);
   Plotly.newPlot('chart-rfm', [
     { type: 'bar', name: 'Customers', x: segs, y: rfm.map(r => r.customers||r.count||0), marker: { color: '#006a68' }, yaxis: 'y' },
     { type: 'bar', name: 'Revenue', x: segs, y: rfm.map(r => r.revenue||0), marker: { color: '#ffb347' }, yaxis: 'y2' },
   ], plotlyLayout('chart-rfm', { height: 320, barmode: 'group',
-    yaxis: { title: 'Customers', gridcolor: '#e8efee' },
+    yaxis: { ...plotlyLayout().yaxis, title: 'Customers' },
     yaxis2: { overlaying: 'y', side: 'right', title: 'Revenue ($)', tickprefix: '$', tickformat: ',.0f', gridcolor: 'transparent' },
-    xaxis: { tickangle: -30 },
+    xaxis: { ...plotlyLayout().xaxis, tickangle: -30 },
   }), PLOTLY_CONFIG);
 }
 
 // ── Lifecycle Donut ────────────────────────────────────────────────────────
 function renderLifecycleDonut(lifecycle) {
+  if (!lifecycle || lifecycle.length === 0) return showEmptyState('chart-lifecycle');
   Plotly.newPlot('chart-lifecycle', [{
     type: 'pie', hole: 0.55,
     labels: lifecycle.map(r => r.lifecycle_stage),
@@ -713,11 +1084,12 @@ function renderLifecycleDonut(lifecycle) {
     marker: { colors: COLORS },
     textinfo: 'percent',
     hovertemplate: '<b>%{label}</b><br>%{value} customers (%{percent})<extra></extra>',
-  }], plotlyLayout('chart-lifecycle', { height: 320, margin: { t: 20, b: 20, l: 20, r: 20 } }), PLOTLY_CONFIG);
+  }], plotlyLayout('chart-lifecycle', { height: 320, margin: { t: 20, b: 20, l: 20, r: 20 }, showlegend: false }), PLOTLY_CONFIG);
 }
 
 // ── Funnel ─────────────────────────────────────────────────────────────────
 function renderFunnel(overall) {
+  if (!overall || overall.length === 0) return showEmptyState('chart-funnel');
   const stages = overall.map(r => r.stage);
   const values = overall.map(r => r.sessions);
   const fw = getContainerWidth('chart-funnel');
@@ -729,11 +1101,12 @@ function renderFunnel(overall) {
     textinfo: 'value+percent initial',
     marker: { color: ['#006a68','#05d8d5','#b5edea','#306765'] },
     connector: { line: { color: '#bacac8', width: 1 } },
-  }], plotlyLayout('chart-funnel', { height: 320, funnelmode: 'stack', margin: { t: 10, b: 10, l: fL, r: fR } }), PLOTLY_CONFIG);
+  }], plotlyLayout('chart-funnel', { height: 320, showlegend: false, funnelmode: 'stack', margin: { t: 10, b: 10, l: fL, r: fR } }), PLOTLY_CONFIG);
 }
 
 // ── Segment Heatmap ────────────────────────────────────────────────────────
 function renderSegmentHeatmap(device, source) {
+  if (!device || device.length === 0 || !source || source.length === 0) return showEmptyState('chart-segment-heatmap');
   const stages = ['page_view','add_to_cart','checkout','purchase'];
   const stageLabels = ['Page View','Add to Cart','Checkout','Purchase'];
   const deviceLabels = device.map(r => r.device);
@@ -769,21 +1142,21 @@ function renderSegmentHeatmap(device, source) {
 
 // ── Sunburst ───────────────────────────────────────────────────────────────
 function renderSunburst(sunburst) {
-  const ids = [], labels = [], parents = [], values = [];
   const clean = (sunburst || []).filter(r => r.region && r.gender_inferred && r.age_band && r.users > 0);
-  if (clean.length === 0) {
-    document.getElementById('chart-sunburst').innerHTML = '<p style="color:#3b4949;text-align:center;padding:40px 0;font-size:0.85rem;">No demographic data available.</p>';
-    return;
-  }
+  if (clean.length === 0) return showEmptyState('chart-sunburst');
+  const ids = [], labels = [], parents = [], values = [];
   const regions = [...new Set(clean.map(r => r.region))];
   regions.forEach(reg => {
-    ids.push(reg); labels.push(reg); parents.push(''); values.push(0);
-    const genders = [...new Set(clean.filter(r => r.region===reg).map(r => r.gender_inferred))];
+    const regRows = clean.filter(r => r.region===reg);
+    const regTotal = regRows.reduce((s,r)=>s+r.users,0);
+    ids.push(reg); labels.push(reg); parents.push(''); values.push(regTotal);
+    const genders = [...new Set(regRows.map(r => r.gender_inferred))];
     genders.forEach(gen => {
       const gid = `${reg}|${gen}`;
-      const tot = clean.filter(r => r.region===reg && r.gender_inferred===gen).reduce((s,r)=>s+r.users,0);
-      ids.push(gid); labels.push(gen); parents.push(reg); values.push(tot);
-      clean.filter(r => r.region===reg && r.gender_inferred===gen).forEach(r => {
+      const genRows = regRows.filter(r => r.gender_inferred===gen);
+      const genTotal = genRows.reduce((s,r)=>s+r.users,0);
+      ids.push(gid); labels.push(gen); parents.push(reg); values.push(genTotal);
+      genRows.forEach(r => {
         ids.push(`${gid}|${r.age_band}`); labels.push(r.age_band); parents.push(gid); values.push(r.users);
       });
     });
@@ -793,6 +1166,7 @@ function renderSunburst(sunburst) {
 
 // ── Age Pyramid ────────────────────────────────────────────────────────────
 function renderAgePyramid(age_gender) {
+  if (!age_gender || age_gender.length === 0) return showEmptyState('chart-age-pyramid');
   const male = age_gender.filter(r => r.gender_inferred==='Male');
   const female = age_gender.filter(r => r.gender_inferred==='Female');
   const ages = [...new Set(age_gender.map(r => r.age_band))];
@@ -804,8 +1178,9 @@ function renderAgePyramid(age_gender) {
 
 // ── Retention Heatmap ──────────────────────────────────────────────────────
 function renderRetention(type, data) {
-  const { cohorts, months, values } = data;
   const chartId = `chart-retention-${type}`;
+  if (!data || !data.values || data.values.length === 0) return showEmptyState(chartId);
+  const { cohorts, months, values } = data;
   const lyt = plotlyLayout(chartId);
   const rw = getContainerWidth(chartId);
   const retL = Math.round(Math.max(60, Math.min(90, rw * 0.14)));
@@ -824,7 +1199,7 @@ function renderRetention(type, data) {
     zmin: 0, zmax: 1,
     colorbar: { tickformat: ',.0%', len: 0.6, thickness: 12 },
     hovertemplate: 'Cohort: %{y}<br>Month: %{x}<br>Retention: %{z:.1%}<extra></extra>',
-  }], { ...lyt, height: 380, xaxis: { tickfont: { size: lyt.font.size } }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { t: 20, b: 40, l: retL, r: retR } }, PLOTLY_CONFIG);
+  }], { ...lyt, height: 380, showlegend: false, xaxis: { tickfont: { size: lyt.font.size } }, yaxis: { automargin: true, tickfont: { size: lyt.font.size } }, margin: { t: 20, b: 40, l: retL, r: retR } }, PLOTLY_CONFIG);
 }
 
 // ── Retention KPIs ─────────────────────────────────────────────────────────
@@ -844,10 +1219,26 @@ function renderRetentionKPIs(ret) {
 function appendMessage(role, text) {
   const el = document.getElementById('chat-messages');
   const div = document.createElement('div');
-  div.className = role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot';
-  div.textContent = text;
+  div.className = 'flex gap-4 ' + (role === 'user' ? 'flex-row-reverse' : '');
+  
+  const icon = role === 'user' ? 'user' : 'bot';
+  const bgColor = role === 'user' ? 'bg-primary shadow-primary/20' : 'bg-white shadow-sm border border-gray-100';
+  const textColor = role === 'user' ? 'text-white' : 'text-on-surface';
+  const bubbleClass = role === 'user' ? 'rounded-2xl rounded-tr-none' : 'rounded-2xl rounded-tl-none';
+  const iconColor = role === 'user' ? 'bg-white/20 text-white' : 'bg-primary text-white';
+
+  div.innerHTML = `
+    <div class="w-10 h-10 rounded-xl ${iconColor} flex items-center justify-center shrink-0 shadow-lg">
+      <i data-lucide="${icon}" class="w-6 h-6"></i>
+    </div>
+    <div class="${bgColor} ${textColor} p-5 ${bubbleClass} max-w-[85%]">
+      <p class="leading-relaxed text-[0.95rem]">${text}</p>
+    </div>
+  `;
+  
   el.appendChild(div);
   el.scrollTop = el.scrollHeight;
+  lucide.createIcons();
 }
 
 async function sendChat() {
@@ -855,19 +1246,46 @@ async function sendChat() {
   const q = input.value.trim();
   if (!q) return;
   input.value = '';
+  
+  // User message
   appendMessage('user', q);
-  appendMessage('bot', '…');
+
+  // Bot loading state
+  const msgDiv = document.getElementById('chat-messages');
+  const botBubble = document.createElement('div');
+  botBubble.className = 'flex gap-4';
+  botBubble.innerHTML = `
+    <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0 shadow-lg">
+      <i data-lucide="bot" class="w-6 h-6"></i>
+    </div>
+    <div class="bg-white p-5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 flex items-center gap-2">
+      <span class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
+      <span class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay:0.2s"></span>
+      <span class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay:0.4s"></span>
+    </div>
+  `;
+  msgDiv.appendChild(botBubble);
+  msgDiv.scrollTop = msgDiv.scrollHeight;
+  lucide.createIcons();
+
   try {
-    const r = await fetch(API + '/api/chatbot/query', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question: q}) });
+    const r = await fetch(API + '/api/chatbot/query', { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ question: q }) 
+    });
+    if (!r.ok) throw new Error('Bot error');
     const data = await r.json();
-    document.querySelectorAll('#chat-messages .chat-bubble-bot').forEach((b,i,arr) => { if(i===arr.length-1) b.textContent = data.answer; });
-  } catch {
-    document.querySelectorAll('#chat-messages .chat-bubble-bot').forEach((b,i,arr) => { if(i===arr.length-1) b.textContent = 'Could not reach the API.'; });
+    botBubble.remove();
+    appendMessage('bot', data.answer);
+  } catch (err) {
+    botBubble.remove();
+    appendMessage('bot', "I'm sorry, I'm having trouble connecting to the analytics engine right now. Please try again in a moment.");
   }
 }
 
-function sendSuggestion(btn) {
-  document.getElementById('chat-input').value = btn.textContent;
+function sendSuggestion(text) {
+  document.getElementById('chat-input').value = text;
   sendChat();
 }
 
@@ -878,29 +1296,97 @@ async function lookupCustomer() {
   const val = document.getElementById('cid-input').value.trim();
   if (!val) return;
   const el = document.getElementById('customer-result');
-  el.innerHTML = '<div class="spinner" style="margin:16px auto;width:24px;height:24px;"></div>';
+  el.innerHTML = `
+    <div class="flex items-center justify-center p-8">
+      <div class="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>`;
   try {
     const r = await fetch(API + `/api/customers/${encodeURIComponent(val)}`);
-    if (r.status === 404) { el.innerHTML = `<p style="color:#ba1a1a;font-size:0.85rem;">Customer ${val} not found.</p>`; return; }
+    if (r.status === 404) { 
+      el.innerHTML = `
+        <div class="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-medium flex items-center gap-2 mt-4">
+          <i data-lucide="alert-circle" class="w-4 h-4"></i>
+          Customer ${val} not found.
+        </div>`; 
+      lucide.createIcons();
+      return; 
+    }
     const d = await r.json();
     const [tc, tbg] = tierColors[d.ltv_tier] || ['#006a68','#eef5f4'];
     el.innerHTML = `
-      <div style="border-top:1px solid #eef5f4;padding-top:14px;">
-        <div style="font-family:'Manrope',sans-serif;font-size:1rem;font-weight:700;margin-bottom:2px;">${d.name||'—'}</div>
-        <div style="font-size:0.78rem;color:#3b4949;margin-bottom:12px;">${d.country||''} · Age ${d.age||'—'}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.78rem;margin-bottom:12px;">
-          <div><span style="color:#3b4949;">Sessions</span><br><b>${d.session_count||0}</b></div>
-          <div><span style="color:#3b4949;">Orders</span><br><b>${d.order_count||0}</b></div>
-          <div><span style="color:#3b4949;">Revenue</span><br><b>${fmtCur(d.revenue||0)}</b></div>
-          <div><span style="color:#3b4949;">AOV</span><br><b>${fmtCur(d.avg_order_value||0)}</b></div>
-          <div><span style="color:#3b4949;">RFM</span><br><b>${d.rfm_segment||'—'}</b></div>
-          <div><span style="color:#3b4949;">Lifecycle</span><br><b>${d.lifecycle_stage||'—'}</b></div>
+      <div class="mt-6 pt-6 border-t border-slate-100 space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 shadow-inner">
+            <i data-lucide="user" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <div class="font-headline font-bold text-on-surface text-xl leading-tight">${d.name||'—'}</div>
+            <div class="text-sm text-on-surface-variant font-medium flex items-center gap-2">
+              <span>${d.country||''}</span>
+              <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+              <span>Age ${d.age||'—'}</span>
+            </div>
+          </div>
         </div>
-        <div style="margin-bottom:10px;"><span class="tier-badge" style="background:${tbg};color:${tc};border:1px solid ${tc};">LTV: ${d.ltv_tier||'—'} (${d.ltv_score||0}/100)</span></div>
-        <div class="crm-box" style="font-size:0.78rem;">${d.crm_recommendation||'—'}</div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+            <div class="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Sessions</div>
+            <div class="text-xl font-black text-on-surface">${d.session_count||0}</div>
+          </div>
+          <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+            <div class="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Orders</div>
+            <div class="text-xl font-black text-on-surface">${d.order_count||0}</div>
+          </div>
+          <div class="p-4 bg-primary/5 rounded-2xl border border-primary/10">
+            <div class="text-[0.65rem] font-bold text-primary/70 uppercase tracking-widest mb-1.5">Revenue</div>
+            <div class="text-xl font-black text-primary">${fmtCur(d.revenue||0)}</div>
+          </div>
+          <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+            <div class="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest mb-1.5">AOV</div>
+            <div class="text-xl font-black text-on-surface">${fmtCur(d.avg_order_value||0)}</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[0.7rem] font-bold rounded-lg border border-indigo-100 flex items-center gap-1.5">
+            <i data-lucide="tag" class="w-3 h-3"></i> RFM: ${d.rfm_segment||'—'}
+          </span>
+          <span class="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-[0.7rem] font-bold rounded-lg border border-emerald-100 flex items-center gap-1.5">
+            <i data-lucide="activity" class="w-3 h-3"></i> Stage: ${d.lifecycle_stage||'—'}
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl border-2 shadow-sm" style="background:${tbg}22; border-color:${tc}33;">
+          <div class="flex items-center justify-between mb-3">
+             <div class="flex items-center gap-2">
+               <i data-lucide="award" class="w-4 h-4" style="color:${tc}"></i>
+               <span class="text-[0.7rem] font-bold uppercase tracking-widest" style="color:${tc}">LTV Tier</span>
+             </div>
+             <span class="text-sm font-black" style="color:${tc}">${d.ltv_tier||'—'}</span>
+          </div>
+          <div class="w-full bg-white/50 h-2 rounded-full overflow-hidden border border-slate-100">
+            <div class="h-full rounded-full transition-all duration-1000" style="width:${d.ltv_score||0}%; background:${tc}"></div>
+          </div>
+          <div class="mt-2 text-right text-[0.65rem] font-bold" style="color:${tc}">LTV Score: ${d.ltv_score||0}/100</div>
+        </div>
+
+        <div class="p-5 bg-gradient-to-br from-indigo-50/80 to-purple-50/80 rounded-2xl border border-indigo-100/50">
+          <div class="flex items-center gap-2 mb-3 text-indigo-700">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span class="text-[0.7rem] font-bold uppercase tracking-widest">CRM Recommendation</span>
+          </div>
+          <p class="text-[0.9rem] text-indigo-950 leading-relaxed font-medium italic">"${d.crm_recommendation||'—'}"</p>
+        </div>
       </div>`;
+    lucide.createIcons();
   } catch {
-    el.innerHTML = `<p style="color:#ba1a1a;font-size:0.85rem;">API error. Is the server running?</p>`;
+    el.innerHTML = `
+      <div class="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-medium flex items-center gap-2 mt-4">
+        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+        Connection error. Please check if the API is running.
+      </div>`;
+    lucide.createIcons();
   }
 }
 

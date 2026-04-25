@@ -1,26 +1,38 @@
-"""Rule-based chatbot engine: customer lookup, CRM recommendations, LTV tier scoring.
-
-Phase 2 will replace answer_question() with a Claude API call.
-"""
+"""Hybrid chatbot: rule-based customer lookup/CRM/LTV + Claude-powered natural-language Q&A."""
 from __future__ import annotations
 
+import logging
+import os
+
 import pandas as pd
+from dotenv import load_dotenv
+
+try:
+    import anthropic
+except ImportError:
+    anthropic = None
 
 from .utils import format_currency, format_number, format_pct
+
+load_dotenv(override=True)
+
+logger = logging.getLogger(__name__)
+
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+CLAUDE_MODEL = "claude-haiku-4-5-20251001"
+CLAUDE_MAX_TOKENS = 600
 
 # ---------------------------------------------------------------------------
 # CRM recommendation table
 # ---------------------------------------------------------------------------
 
 _CRM_RULES: dict[str, str] = {
-    # Lifecycle-based
     "New Visitor": "Send a welcome email with a first-order discount code (10–15%).",
     "Browsing Prospect": "Push a limited-time offer on browsed products; highlight top-rated items.",
     "New Buyer": "Send a product guide + cross-sell recommendations 3 days after purchase.",
     "Active Repeat Buyer": "Invite to loyalty programme / points rewards; offer early access to new arrivals.",
     "Cooling Down": "Send a win-back email ('We miss you') with a personalised exclusive discount.",
     "Dormant Customer": "High-value: direct outreach with premium incentive. Low-value: low-cost EDM re-engagement.",
-    # RFM-based overrides
     "Champions": "Invite to VIP events; offer first access to new collections and limited editions.",
     "Loyal Customers": "Recognise loyalty with milestone rewards; promote complementary product categories.",
     "At-Risk High Value": "Urgent win-back: targeted discount + proactive customer-service contact.",
@@ -31,8 +43,6 @@ _CRM_RULES: dict[str, str] = {
 
 
 def get_crm_recommendation(lifecycle_stage: str, rfm_segment: str) -> str:
-    """Return the CRM action string for a given lifecycle + RFM state."""
-    # RFM segment overrides take priority for high-stakes groups
     priority_rfm = {"Champions", "At-Risk High Value", "Lost Low Value"}
     if rfm_segment in priority_rfm:
         return _CRM_RULES.get(rfm_segment, "Monitor and re-evaluate in 30 days.")
@@ -40,17 +50,11 @@ def get_crm_recommendation(lifecycle_stage: str, rfm_segment: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# LTV tier scoring (rule-based, no ML required)
+# LTV tier scoring
 # ---------------------------------------------------------------------------
 
 def get_ltv_tier(revenue: float, order_count: int, recency_days: float) -> tuple[str, int]:
-    """
-    Return (tier_label, score_0_to_100).
-
-    Tiers:  Platinum ≥ 80 | Gold 60–79 | Silver 40–59 | Bronze < 40
-    """
     score = 0
-    # Revenue contribution (max 40 pts)
     if revenue >= 500:
         score += 40
     elif revenue >= 200:
@@ -60,7 +64,6 @@ def get_ltv_tier(revenue: float, order_count: int, recency_days: float) -> tuple
     elif revenue > 0:
         score += 6
 
-    # Order frequency (max 30 pts)
     if order_count >= 8:
         score += 30
     elif order_count >= 4:
@@ -70,7 +73,6 @@ def get_ltv_tier(revenue: float, order_count: int, recency_days: float) -> tuple
     elif order_count == 1:
         score += 4
 
-    # Recency (max 30 pts — lower recency = more recent = better)
     if recency_days <= 30:
         score += 30
     elif recency_days <= 60:
@@ -100,7 +102,6 @@ def lookup_customer(
     customer_id: int,
     profile: pd.DataFrame,
 ) -> dict | None:
-    """Return a rich dict summary for a single customer, or None if not found."""
     row = profile[profile["customer_id"] == customer_id]
     if row.empty:
         return None
@@ -125,7 +126,6 @@ def lookup_customer(
         "age_band": str(r.get("age_band", "-")),
         "gender_inferred": str(r.get("gender_inferred", "-")),
         "marketing_opt_in": bool(r.get("marketing_opt_in", 0)),
-        # Behaviour
         "session_count": int(r.get("session_count", 0)),
         "order_count": int(r.get("order_count", 0)),
         "revenue": float(r.get("revenue", 0)),
@@ -135,34 +135,189 @@ def lookup_customer(
         "active_days": float(r.get("active_days", 0)),
         "page_to_cart_rate": float(r.get("page_to_cart_rate", 0)),
         "avg_rating": float(r.get("avg_rating", 0)),
-        # Segments
         "rfm_segment": str(r.get("rfm_segment", "-")),
         "lifecycle_stage": str(r.get("lifecycle_stage", "-")),
         "cluster_name": str(r.get("cluster_name", "-")),
-        # LTV
         "ltv_tier": tier,
         "ltv_score": score,
-        # CRM
         "crm_recommendation": crm,
     }
 
 
 # ---------------------------------------------------------------------------
-# Simple keyword Q&A (Phase 1 — no Claude API)
+# Business context for Claude (stable per dataset load — cached via id())
 # ---------------------------------------------------------------------------
 
-def answer_question(
+_context_cache: dict[tuple, str] = {}
+
+
+def _build_business_context(
+    data: dict[str, pd.DataFrame],
+    profile: pd.DataFrame,
+) -> str:
+    orders = data["orders"]
+    sessions = data["sessions"]
+    reviews = data["reviews"]
+    customers = data["customers"]
+
+    total_revenue = orders["total_usd"].sum()
+    total_orders = len(orders)
+    total_customers = len(customers)
+    total_sessions = len(sessions)
+    aov = orders["total_usd"].mean() if total_orders else 0
+    conversion = total_orders / total_sessions if total_sessions else 0
+    avg_rating = reviews["rating"].mean() if len(reviews) else 0
+
+    monthly = orders.copy()
+    monthly["month"] = monthly["order_time"].dt.to_period("M").dt.to_timestamp()
+    monthly_rev = monthly.groupby("month")["total_usd"].sum().sort_values(ascending=False)
+    top_month = monthly_rev.index[0] if len(monthly_rev) else None
+    top_month_rev = monthly_rev.iloc[0] if len(monthly_rev) else 0
+
+    top_products = (
+        data["order_items"]
+        .merge(data["products"][["product_id", "name", "category"]], on="product_id", how="left")
+        .groupby(["name", "category"])["quantity"]
+        .sum()
+        .sort_values(ascending=False)
+        .head(10)
+    )
+
+    category_rev = (
+        data["order_items"]
+        .merge(data["products"][["product_id", "category"]], on="product_id", how="left")
+        .merge(orders[["order_id", "total_usd"]], on="order_id", how="left")
+        .groupby("category")["quantity"]
+        .sum()
+        .sort_values(ascending=False)
+    )
+
+    lifecycle_counts = profile["lifecycle_stage"].value_counts() if "lifecycle_stage" in profile.columns else pd.Series(dtype=int)
+    rfm_counts = profile["rfm_segment"].value_counts() if "rfm_segment" in profile.columns else pd.Series(dtype=int)
+    cluster_counts = profile["cluster_name"].value_counts() if "cluster_name" in profile.columns else pd.Series(dtype=int)
+    country_counts = customers["country"].value_counts().head(10) if "country" in customers.columns else pd.Series(dtype=int)
+    region_counts = profile["region"].value_counts() if "region" in profile.columns else pd.Series(dtype=int)
+
+    lines = [
+        "=== BUSINESS SNAPSHOT (InsightFlow retail dataset) ===",
+        f"Customers: {format_number(total_customers)} across {customers['country'].nunique()} countries",
+        f"Sessions: {format_number(total_sessions)} | Orders: {format_number(total_orders)}",
+        f"Total revenue: {format_currency(total_revenue)}",
+        f"Average order value: {format_currency(aov)}",
+        f"Session→order conversion: {format_pct(conversion)}",
+        f"Average review rating: {avg_rating:.2f}/5 across {format_number(len(reviews))} reviews",
+    ]
+    if top_month is not None:
+        lines.append(f"Peak revenue month: {top_month.strftime('%B %Y')} ({format_currency(top_month_rev)})")
+
+    if len(lifecycle_counts):
+        lines.append("")
+        lines.append("=== LIFECYCLE STAGES ===")
+        for stage, n in lifecycle_counts.items():
+            lines.append(f"- {stage}: {format_number(n)}")
+
+    if len(rfm_counts):
+        lines.append("")
+        lines.append("=== RFM SEGMENTS ===")
+        for seg, n in rfm_counts.items():
+            lines.append(f"- {seg}: {format_number(n)}")
+
+    if len(cluster_counts):
+        lines.append("")
+        lines.append("=== PERSONA CLUSTERS ===")
+        for name, n in cluster_counts.items():
+            lines.append(f"- {name}: {format_number(n)}")
+
+    if len(region_counts):
+        lines.append("")
+        lines.append("=== REGIONS (customer count) ===")
+        for reg, n in region_counts.items():
+            lines.append(f"- {reg}: {format_number(n)}")
+
+    if len(country_counts):
+        lines.append("")
+        lines.append("=== TOP COUNTRIES ===")
+        for c, n in country_counts.items():
+            lines.append(f"- {c}: {format_number(n)}")
+
+    if len(top_products):
+        lines.append("")
+        lines.append("=== TOP 10 PRODUCTS (by units sold) ===")
+        for (name, cat), qty in top_products.items():
+            lines.append(f"- {name} [{cat}]: {format_number(qty)} units")
+
+    if len(category_rev):
+        lines.append("")
+        lines.append("=== CATEGORIES (by units) ===")
+        for cat, qty in category_rev.items():
+            lines.append(f"- {cat}: {format_number(qty)} units")
+
+    return "\n".join(lines)
+
+
+def _get_cached_context(data: dict[str, pd.DataFrame], profile: pd.DataFrame) -> str:
+    key = (id(data), id(profile))
+    ctx = _context_cache.get(key)
+    if ctx is None:
+        ctx = _build_business_context(data, profile)
+        _context_cache[key] = ctx
+    return ctx
+
+
+# ---------------------------------------------------------------------------
+# Claude-powered Q&A
+# ---------------------------------------------------------------------------
+
+_CLAUDE_SYSTEM_TEMPLATE = (
+    "You are the analytics assistant for InsightFlow — a retail customer intelligence platform. "
+    "Answer questions using ONLY the business snapshot below. "
+    "Be concise: 1–4 sentences plus optional bullets, in markdown. "
+    "Use USD for currency. If the snapshot doesn't contain the answer, say so honestly and suggest "
+    "which dashboard tab (Overview / Products / Customers / Retention) the user should check.\n\n"
+    "{context}"
+)
+
+
+def _claude_answer(
     question: str,
     data: dict[str, pd.DataFrame],
     profile: pd.DataFrame,
 ) -> str:
-    """
-    Keyword-based Q&A.  Phase 2 will replace this with a Claude API call.
-    Returns a markdown-formatted answer string.
-    """
+    if anthropic is None:
+        raise RuntimeError("anthropic SDK is not installed; run `pip install anthropic`.")
+    if not ANTHROPIC_API_KEY:
+        raise RuntimeError("ANTHROPIC_API_KEY is not set. Add it to .env.")
+
+    context = _get_cached_context(data, profile)
+    system_text = _CLAUDE_SYSTEM_TEMPLATE.format(context=context)
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    resp = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=CLAUDE_MAX_TOKENS,
+        system=[
+            {
+                "type": "text",
+                "text": system_text,
+                "cache_control": {"type": "ephemeral"},
+            }
+        ],
+        messages=[{"role": "user", "content": question}],
+    )
+    return resp.content[0].text.strip()
+
+
+# ---------------------------------------------------------------------------
+# Keyword fallback (used when Claude fails or API key missing)
+# ---------------------------------------------------------------------------
+
+def _answer_question_fallback(
+    question: str,
+    data: dict[str, pd.DataFrame],
+    profile: pd.DataFrame,
+) -> str:
     q = question.lower()
 
-    # --- Revenue questions ---
     if any(w in q for w in ["revenue", "sales", "income", "earn"]):
         total = data["orders"]["total_usd"].sum()
         monthly = data["orders"].copy()
@@ -173,7 +328,6 @@ def answer_question(
             f"**Peak month:** {top_month.strftime('%B %Y')}"
         )
 
-    # --- Order questions ---
     if any(w in q for w in ["order", "purchase", "buy", "bought"]):
         total = len(data["orders"])
         aov = data["orders"]["total_usd"].mean()
@@ -182,7 +336,6 @@ def answer_question(
             f"**Average order value:** {format_currency(aov)}"
         )
 
-    # --- Customer / user questions ---
     if any(w in q for w in ["customer", "user", "buyer", "shopper"]):
         n = len(data["customers"])
         countries = data["customers"]["country"].nunique()
@@ -191,7 +344,6 @@ def answer_question(
             f"**Countries:** {countries}"
         )
 
-    # --- Retention / churn questions ---
     if any(w in q for w in ["retain", "churn", "dormant", "cooling", "lost"]):
         if "lifecycle_stage" in profile.columns:
             counts = profile["lifecycle_stage"].value_counts()
@@ -202,7 +354,6 @@ def answer_question(
                 f"**Cooling down:** {format_number(cooling)}"
             )
 
-    # --- Segment questions ---
     if any(w in q for w in ["champion", "rfm", "segment", "loyal"]):
         if "rfm_segment" in profile.columns:
             seg = profile["rfm_segment"].value_counts().reset_index()
@@ -212,7 +363,6 @@ def answer_question(
                 lines.append(f"- {row['Segment']}: {format_number(row['Customers'])}")
             return "\n".join(lines)
 
-    # --- Rating / review questions ---
     if any(w in q for w in ["rating", "review", "sentiment", "feedback"]):
         avg = data["reviews"]["rating"].mean()
         n = len(data["reviews"])
@@ -221,7 +371,6 @@ def answer_question(
             f"**Total reviews:** {format_number(n)}"
         )
 
-    # --- Conversion questions ---
     if any(w in q for w in ["conversion", "funnel", "cart", "checkout"]):
         orders = len(data["orders"])
         sessions = len(data["sessions"])
@@ -231,7 +380,6 @@ def answer_question(
             f"**Sessions:** {format_number(sessions)} | **Orders:** {format_number(orders)}"
         )
 
-    # --- Top products ---
     if any(w in q for w in ["product", "item", "top", "best"]):
         top = (
             data["order_items"]
@@ -249,6 +397,20 @@ def answer_question(
     return (
         "I couldn't find a specific answer for that question.  \n"
         "Try asking about: **revenue**, **orders**, **customers**, **retention**, "
-        "**RFM segments**, **ratings**, **conversion**, or **top products**.  \n\n"
-        "_AI-powered natural language Q&A is coming in Phase 2 (Claude API)._"
+        "**RFM segments**, **ratings**, **conversion**, or **top products**."
     )
+
+
+def answer_question(
+    question: str,
+    data: dict[str, pd.DataFrame],
+    profile: pd.DataFrame,
+) -> str:
+    """Prefer Claude when ANTHROPIC_API_KEY is set; fall back to keyword matching on error."""
+    if ANTHROPIC_API_KEY and anthropic is not None:
+        try:
+            return _claude_answer(question, data, profile)
+        except Exception as exc:
+            logger.warning("Claude call failed, falling back to keyword engine: %s", exc)
+
+    return _answer_question_fallback(question, data, profile)

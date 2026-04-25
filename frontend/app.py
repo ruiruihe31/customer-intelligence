@@ -71,44 +71,272 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
-# Custom CSS — dark theme overlay
+# Custom CSS — Enhanced Dark Theme
 # ---------------------------------------------------------------------------
 st.markdown(
     """
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-    .kpi-card {
-        background: rgba(8, 21, 34, 0.82);
-        border: 1px solid rgba(148, 163, 184, 0.16);
-        border-radius: 18px;
-        padding: 18px 20px;
-        text-align: center;
+    /* Global overrides and base */
+    :root {
+        --primary: #00c2a8;
+        --primary-glow: rgba(0, 194, 168, 0.3);
+        --bg-gradient: linear-gradient(135deg, #050b14 0%, #0a1622 100%);
+        --card-bg: rgba(13, 25, 42, 0.8);
+        --sidebar-bg: #050b14;
+        --text-main: #eef3ff;
+        --text-muted: #8fa2be;
     }
-    .kpi-label { color: #8fa2be; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
-    .kpi-value { font-size: 2rem; font-weight: 700; color: #eef3ff; letter-spacing: -0.03em; }
-    .kpi-detail { color: #c9d6ea; font-size: 0.82rem; margin-top: 4px; }
-    .persona-box {
-        background: rgba(10, 26, 42, 0.96);
-        border: 1px solid rgba(148, 163, 184, 0.16);
-        border-radius: 18px;
-        padding: 16px;
+
+    /* Force Dark Mode on all Streamlit containers */
+    .stApp, .main, .stSidebar, [data-testid="stHeader"] {
+        background: var(--bg-gradient) !important;
+        background-attachment: fixed !important;
+        color: var(--text-main) !important;
     }
-    .persona-title { color: #00c2a8; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; }
-    .persona-name { font-size: 1.05rem; font-weight: 700; color: #eef3ff; margin: 6px 0 10px; }
-    .crm-box {
-        background: rgba(0, 194, 168, 0.08);
-        border: 1px solid rgba(0, 194, 168, 0.3);
-        border-radius: 12px;
-        padding: 14px 16px;
-        margin-top: 12px;
+    
+    [data-testid="stSidebar"] {
+        background-color: var(--sidebar-bg) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     }
-    .tier-badge {
-        display: inline-block;
-        padding: 4px 12px;
+
+    /* Main Container Spacing */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 5rem !important;
+        max-width: 1400px !important;
+    }
+
+    /* Tabs Layout */
+    .stTabs [data-baseweb="tab-panel"] {
+        padding-top: 2rem !important;
+    }
+
+    /* Plotly Charts Background Fix */
+    .js-plotly-plot {
+        background: transparent !important;
         border-radius: 20px;
-        font-size: 0.85rem;
+    }
+
+    h1, h2, h3, h4, h5, h6, .stHeader, label, p, span, div {
+        font-family: 'Inter', sans-serif !important;
+        color: var(--text-main) !important;
+    }
+
+    h1, h2, h3, .stHeader {
+        font-family: 'Manrope', sans-serif !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    /* Native Streamlit Input Components */
+    .stSelectbox div[data-baseweb="select"], 
+    .stTextInput input, 
+    .stNumberInput input,
+    .stTextArea textarea {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        color: var(--text-main) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+    }
+
+    /* KPI Cards */
+    .kpi-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 24px 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(12px);
+        position: relative;
+        overflow: hidden;
+    }
+    .kpi-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 4px;
+        background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        opacity: 0.3;
+    }
+    .kpi-card:hover {
+        border-color: rgba(0, 194, 168, 0.3);
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(0, 194, 168, 0.1);
+    }
+    .kpi-label { 
+        color: var(--text-muted); 
+        font-size: 0.75rem; 
         font-weight: 700;
+        text-transform: uppercase; 
+        letter-spacing: 0.12em; 
         margin-bottom: 8px;
     }
+    .kpi-value { 
+        font-size: 2.5rem; 
+        font-weight: 800; 
+        color: var(--text-main); 
+        letter-spacing: -0.04em; 
+        line-height: 1;
+        margin: 10px 0;
+        font-family: 'Manrope', sans-serif;
+    }
+    .kpi-detail { 
+        color: var(--primary); 
+        font-size: 0.8rem; 
+        font-weight: 600;
+        margin-top: 8px;
+        background: rgba(0, 194, 168, 0.1);
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 8px;
+    }
+
+    /* Persona Cards */
+    .persona-box {
+        background: rgba(15, 30, 50, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 24px;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    .persona-box:hover {
+        border-color: var(--primary);
+        box-shadow: 0 12px 30px rgba(0, 194, 168, 0.15);
+        background: rgba(20, 40, 65, 0.95);
+    }
+    .persona-title { 
+        color: var(--primary); 
+        font-size: 0.7rem; 
+        font-weight: 800;
+        text-transform: uppercase; 
+        letter-spacing: 0.15em; 
+        margin-bottom: 4px;
+    }
+    .persona-name { 
+        font-size: 1.3rem; 
+        font-weight: 800; 
+        color: #ffffff; 
+        margin: 8px 0 16px; 
+        line-height: 1.2;
+        font-family: 'Manrope', sans-serif;
+    }
+    .persona-stat {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+    }
+    .persona-stat-label { color: var(--text-muted); font-weight: 500; }
+    .persona-stat-value { color: var(--text-main); font-weight: 700; }
+
+    /* CRM Box */
+    .crm-box {
+        background: rgba(0, 194, 168, 0.05);
+        border: 1px solid rgba(0, 194, 168, 0.2);
+        border-left: 5px solid var(--primary);
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 14px !important;
+        padding: 14px 28px !important;
+        color: var(--text-muted) !important;
+        transition: all 0.2s ease !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background: var(--primary) !important;
+        color: #050b14 !important;
+        box-shadow: 0 8px 20px var(--primary-glow) !important;
+    }
+
+    /* DataFrame & Tables */
+    .stDataFrame {
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    .stDataFrame [data-testid="stTable"] {
+        background-color: var(--card-bg) !important;
+        border-radius: 20px !important;
+    }
+    
+    /* Headers */
+    .stHeader {
+        background: transparent !important;
+    }
+
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 16px !important;
+        padding: 10px 15px !important;
+    }
+    .streamlit-expanderContent {
+        background: rgba(255, 255, 255, 0.01) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-top: none !important;
+        border-radius: 0 0 16px 16px !important;
+    }
+    
+    /* Buttons */
+    .stButton button {
+        border-radius: 16px !important;
+        padding: 12px 28px !important;
+        background: var(--primary) !important;
+        color: #050b14 !important;
+        font-weight: 700 !important;
+        border: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .stButton button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px var(--primary-glow) !important;
+    }
+
+    /* Chat Styling */
+    .stChatInput input {
+        border-radius: 30px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 15px 25px !important;
+    }
+    .stChatInput input:focus {
+        border-color: var(--primary) !important;
+    }
+
+    .stChatMessage {
+        background-color: transparent !important;
+        padding-top: 1rem !important;
+    }
+    .stChatMessage [data-testid="stChatMessageContent"] {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 15px 20px;
+    }
+    .stChatMessage[data-testid="user"] [data-testid="stChatMessageContent"] {
+        background: rgba(0, 194, 168, 0.1) !important;
+        border-color: rgba(0, 194, 168, 0.2) !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -191,16 +419,17 @@ st.markdown("## Customer Intelligence Platform")
 
 kpi_cols = st.columns(6)
 kpis = [
-    ("Customers", format_number(len(data["customers"])), f"{data['customers']['country'].nunique()} countries"),
-    ("Sessions", format_number(len(data["sessions"])), f"{format_number(data['sessions']['customer_id'].nunique())} active users"),
-    ("Orders", format_number(len(data["orders"])), f"{format_number(purchase_sessions)} purchase sessions"),
-    ("Revenue", format_currency(data["orders"]["total_usd"].sum()), f"AOV {format_currency(data['orders']['total_usd'].mean())}"),
-    ("Conversion", format_pct(purchase_sessions / page_sessions if page_sessions else 0), f"Cart rate {format_pct(add_to_cart_sessions / page_sessions if page_sessions else 0)}"),
-    ("Avg Rating", f"{data['reviews']['rating'].mean():.2f}", f"{format_number(len(data['reviews']))} reviews"),
+    ("Customers", "👥", format_number(len(data["customers"])), f"{data['customers']['country'].nunique()} countries"),
+    ("Sessions", "🌐", format_number(len(data["sessions"])), f"{format_number(data['sessions']['customer_id'].nunique())} active users"),
+    ("Orders", "📦", format_number(len(data["orders"])), f"{format_number(purchase_sessions)} purchase sessions"),
+    ("Revenue", "💰", format_currency(data["orders"]["total_usd"].sum()), f"AOV {format_currency(data['orders']['total_usd'].mean())}"),
+    ("Conversion", "📈", format_pct(purchase_sessions / page_sessions if page_sessions else 0), f"Cart rate {format_pct(add_to_cart_sessions / page_sessions if page_sessions else 0)}"),
+    ("Avg Rating", "⭐", f"{data['reviews']['rating'].mean():.2f}", f"{format_number(len(data['reviews']))} reviews"),
 ]
-for col, (label, value, detail) in zip(kpi_cols, kpis):
+for col, (label, icon, value, detail) in zip(kpi_cols, kpis):
     col.markdown(
         f'<div class="kpi-card">'
+        f'<div style="font-size:1.5rem; margin-bottom:10px;">{icon}</div>'
         f'<div class="kpi-label">{label}</div>'
         f'<div class="kpi-value">{value}</div>'
         f'<div class="kpi-detail">{detail}</div>'
@@ -260,14 +489,14 @@ with tab_customers:
         for p_col, card in zip(p_cols, persona_cards):
             p_col.markdown(
                 f'<div class="persona-box">'
-                f'<div class="persona-title">Persona</div>'
+                f'<div class="persona-title">Persona Profile</div>'
                 f'<div class="persona-name">{card["cluster_name"]}</div>'
-                f'<small style="color:#8fa2be">{card["top_region"]} / {card["top_source"]}</small><br><br>'
-                f'<b>Users:</b> {card["users"]}<br>'
-                f'<b>Revenue/User:</b> {card["revenue"]}<br>'
-                f'<b>Orders/User:</b> {card["orders"]}<br>'
-                f'<b>Conversion:</b> {card["conversion"]}<br>'
-                f'<b>Avg Age:</b> {card["avg_age"]}'
+                f'<div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:20px; font-weight:600;">📍 {card["top_region"]} &nbsp;•&nbsp; 🔗 {card["top_source"]}</div>'
+                f'<div class="persona-stat"><span class="persona-stat-label">Total Users</span><span class="persona-stat-value">{card["users"]}</span></div>'
+                f'<div class="persona-stat"><span class="persona-stat-label">Revenue/User</span><span class="persona-stat-value">{card["revenue"]}</span></div>'
+                f'<div class="persona-stat"><span class="persona-stat-label">Orders/User</span><span class="persona-stat-value">{card["orders"]}</span></div>'
+                f'<div class="persona-stat"><span class="persona-stat-label">Conversion</span><span class="persona-stat-value">{card["conversion"]}</span></div>'
+                f'<div class="persona-stat"><span class="persona-stat-label">Avg Age</span><span class="persona-stat-value">{card["avg_age"]}</span></div>'
                 f"</div>",
                 unsafe_allow_html=True,
             )
@@ -359,13 +588,19 @@ with tab_chatbot:
                     st.write(f"**Lifecycle:** {info['lifecycle_stage']}")
                     st.write(f"**Persona:** {info['cluster_name']}")
                     st.markdown(
-                        f'<span class="tier-badge" style="background:{tbg};color:{tc};border:1px solid {tc}">'
-                        f"LTV Tier: {info['ltv_tier']} ({info['ltv_score']}/100)</span>",
+                        f'<div style="margin-top:15px; padding:12px; background:{tbg}; border:1px solid {tc}; border-radius:12px; text-align:center;">'
+                        f'<div style="color:{tc}; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">LTV Tier</div>'
+                        f'<div style="color:{tc}; font-size:1.2rem; font-weight:800;">{info["ltv_tier"]}</div>'
+                        f'<div style="color:{tc}; font-size:0.8rem; font-weight:600; opacity:0.8;">Score: {info["ltv_score"]}/100</div>'
+                        f'</div>',
                         unsafe_allow_html=True,
                     )
 
                 st.markdown(
-                    f'<div class="crm-box"><b>CRM Recommendation</b><br>{info["crm_recommendation"]}</div>',
+                    f'<div class="crm-box">'
+                    f'<div class="crm-box-title">✨ CRM Recommendation</div>'
+                    f'<div style="color:var(--text-main); line-height:1.6; font-size:0.95rem;">{info["crm_recommendation"]}</div>'
+                    f'</div>',
                     unsafe_allow_html=True,
                 )
 
