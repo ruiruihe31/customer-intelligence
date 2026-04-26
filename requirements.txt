@@ -22,9 +22,6 @@ fastapi>=0.111
 uvicorn[standard]>=0.29
 pydantic>=2.6
 
-# Frontend (Streamlit — keep for local dev)
-streamlit>=1.40
-
 # AI Chatbot (Phase 2)
 anthropic>=0.25
 

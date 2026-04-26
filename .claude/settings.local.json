@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl -s http://localhost:8000/api/health)"
+      "Bash(curl -s http://localhost:8000/api/health)",
+      "Bash(awk -F',' 'NR>1 {split\\($3, a, \" \"\\); print a[1]\" \"a[2]}' dataset/products.csv)",
+      "Bash(awk -F',' 'NR>1 {print $2}' dataset/products.csv)",
+      "Bash(python3 -c \"from core.analytics import product_metrics, sentiment_product_metrics; from core.charts import make_product_sales_rank, generate_wordcloud_section_html; from api.main import app; print\\('OK — all imports resolve'\\)\")",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
